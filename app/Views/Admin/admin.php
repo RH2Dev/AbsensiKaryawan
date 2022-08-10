@@ -70,7 +70,7 @@
                     <?php endforeach; ?>
                     <?php } else { ?>
                         <div class="alert alert-danger" role="alert">
-                            Tidak Ada data Karyawan
+                            Tidak Ada data Akun
                         </div>
                     <?php } ?>
                 </tbody>

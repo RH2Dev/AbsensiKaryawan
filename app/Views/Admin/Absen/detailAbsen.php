@@ -110,7 +110,7 @@
         scrolling="no" 
         marginheight="0" 
         marginwidth="0" 
-        src="https://maps.google.com/maps?q=<?= $lat; ?>,<?= $long; ?>&hl=es&z=14&amp;output=embed"
+        src="https://maps.google.com/maps?q=<?= $lat; ?>,<?= $long; ?>&hl=en&z=14&amp;output=embed"
         >
         </iframe>
     </div>
@@ -123,7 +123,7 @@
         scrolling="no" 
         marginheight="0" 
         marginwidth="0" 
-        src="https://maps.google.com/maps?q=<?= $latCheckout; ?>,<?= $longCheckout; ?>&hl=es&z=14&amp;output=embed"
+        src="https://maps.google.com/maps?q=<?= $latCheckout; ?>,<?= $longCheckout; ?>&hl=en&z=14&amp;output=embed"
         >
         </iframe>
     </div>
