@@ -49,7 +49,7 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($admin)) { ?>
-                    <?php $i = 1 + (10 * ($currentPage - 1)); ?>
+                    <?php $i = 1; ?>
                     <?php foreach($admin as $admin) : ?>
                     <tr>
                         <td><?= $i++; ?></td>
@@ -75,11 +75,6 @@
                     <?php } ?>
                 </tbody>
             </table>
-        </div>
-        <div class="row">
-            <div class="col">
-                <?= $pager->links('admin', 'pagination') ?>
-            </div>
         </div>
     </div>
 </div>

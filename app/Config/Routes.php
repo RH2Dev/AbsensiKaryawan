@@ -54,6 +54,8 @@ $routes->get('/Admin', 'Admin\Admin::index', ['filter'=>'Login']);
 // ROUTING CRUD DATA ADMIN
 // route get all admin data
 $routes->get('/Admin/Admin', 'Admin\Admin::admin', ['filter'=>'CEO']);
+// route search data admin
+$routes->get('/Admin/Admin/search', 'Admin\Admin::search', ['filter'=>'CEO']);
 // route form & insert admin data
 $routes->get('/Admin/Admin/formInsert', 'Admin\Admin::formInsert', ['filter'=>'CEO']);
 $routes->post('/Admin/Admin/Insert', 'Admin\Admin::insert', ['filter'=>'CEO']);
@@ -68,6 +70,8 @@ $routes->delete('/Admin/Admin/(:num)', 'Admin\Admin::delete/$1', ['filter'=>'CEO
 $routes->get('/Admin/User', 'Admin\User::user', ['filter'=>'Login']);
 // route delete single user data 
 $routes->delete('/Admin/User/(:num)', 'Admin\User::delete/$1', ['filter'=>'HRCEO']);
+// route search data user
+$routes->get('/Admin/User/search', 'Admin\User::search', ['filter'=>'Login']);
 // route form & insert user data 
 $routes->get('/Admin/User/formInsert', 'Admin\User::formInsert', ['filter'=>'HRCEO']);
 $routes->post('/Admin/User/insertData', 'Admin\User::insert', ['filter'=>'HRCEO']);
@@ -80,11 +84,16 @@ $routes->get('/Admin/User/(:num)', 'Admin\User::detail/$1', ['filter'=>'Login'])
 // ROUTING ABSEN
 // route get all absen data 
 $routes->get('/Admin/Absensi', 'Admin\Absen::absen', ['filter'=>'Login']);
+// route search absen data
+$routes->get('/Admin/Absensi/search', 'Admin\Absen::search', ['filter'=>'Login']);
 // route get insert & form absen 
 $routes->get('/Admin/Absensi/formInsert', 'Admin\Absen::formInsert', ['filter'=>'Login']);
 $routes->post('/Admin/Absensi/insert', 'Admin\Absen::insert', ['filter'=>'Login']);
 // routes get detail absen data
 $routes->get('/Admin/Absensi/(:num)', 'Admin\Absen::detail/$1', ['filter'=>'Login']);
+// routes export data absen ke excel
+$routes->get('/Admin/Absensi/export', 'Admin\Absen::export', ['filter'=>'Login']);
+
 
 
 /*

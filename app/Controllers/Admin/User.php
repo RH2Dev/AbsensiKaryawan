@@ -25,7 +25,7 @@ class User extends BaseController
         $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
         $data = [
             'title' => 'Karyawan',
-            'user' => $this->userModel->join('jabatan', 'jabatan.uid = user.jabatan_id')->orderBy('jabatan_id', 'ASC')->paginate(2, 'user'),
+            'user' => $this->userModel->join('jabatan', 'jabatan.uid = user.jabatan_id')->orderBy('jabatan_id', 'ASC')->paginate(10, 'user'),
             'pager' => $this->userModel->pager,
             'currentPage' => $currentPage
         ];
@@ -194,6 +194,28 @@ class User extends BaseController
         // redirect to user page
         session()->setFlashdata('pesan', 'Data user sudah berhasil diupdate');
         return redirect()->to('/Admin/User');
+    }
+
+    public function search() 
+    {
+        $search = $this->request->getVar('search');
+        $db = \Config\Database::connect();
+        $user = $db->table('user');
+        $user->join('jabatan', 'user.jabatan_id = jabatan.uid');
+        $user->select('user.*');
+        $user->select('jabatan.*');
+        $user->like('name', $search);
+        $user->orWhere('nik', $search);
+        $user = $user->get();
+        
+        $data = [
+            'title' => 'Karyawan',
+            'user' => $user->getResultArray()
+        ];
+
+        // echo '<pre>'; print_r($data['user']); die;
+
+        echo view('Admin/User/search', $data);
     }
 }
 ?>

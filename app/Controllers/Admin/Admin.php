@@ -31,8 +31,12 @@ class Admin extends BaseController
             $dataAbsen = $absen->getResultArray();
 
             $absenLabel = !empty($dataAbsen) ? 'Sudah Absen' : 'Belum Absen';
+            $checkoutLabel = !empty($dataAbsen) ? 'Sudah Checkout' : 'Belum Checkout';
+
             $users[$key]['absenLabel'] = $absenLabel;
-        }
+            $users[$key]['checkoutLabel'] = $checkoutLabel;
+        }        
+        
         $data = [
             'title' => 'Home',
             'user' => $users,
@@ -179,6 +183,27 @@ class Admin extends BaseController
         $this->authModel->delete($id);
         session()->setFlashdata('pesan', 'Data akun sudah terhapus');
         return redirect()->to('/Admin/Admin');
+    }
+
+    public function search() 
+    {
+        $search = $this->request->getVar('search');
+        $db = \Config\Database::connect();
+        $admin = $db->table('auth');
+        $admin->join('user', 'auth.nik = user.nik');
+        $admin->join('jabatan', 'user.jabatan_id = jabatan.uid');
+        $admin->select('auth.*');
+        $admin->select('user.name');
+        $admin->select('jabatan.nama_jabatan');
+        $admin->like('username', $search);
+        $admin->orWhere('auth.nik', $search);
+        $admin = $admin->get();
+        $data = [
+            'title' => 'Data Admin',
+            'admin' => $admin->getResultArray()
+        ];
+
+        echo view('Admin/search', $data);
     }
 }
 ?>

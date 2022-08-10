@@ -12,17 +12,12 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-lg-6 mb-2">
+            <div class="col-lg-8 mb-2">
                 <a href="<?php echo base_url(); ?>/Admin/Absensi/formInsert" class="btn btn-primary btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-flag"></i>
                     </span>
                     <span class="text">Tambah Data Absensi</span>
-                </a>
-            </div>
-            <div class="col-lg-2 mb-2">
-                <a href="<?= base_url(); ?>/Admin/Absensi/export" class="btn btn-primary btn-icon-split flex-end">
-                    <span class="text">Export to Excel</span>
                 </a>
             </div>
             <div class="col-lg-4 mb-2">

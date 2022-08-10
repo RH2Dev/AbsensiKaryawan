@@ -5,11 +5,6 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-1 font-weight-bold text-primary">Data Karyawan</h6>
-        <?php if(session()->getFlashData('pesan')) : ?>
-            <div class="alert alert-success" role="alert">
-                <?= session()->getFlashdata('pesan'); ?>
-            </div>
-        <?php endif; ?>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -20,7 +15,8 @@
                         <th>Nama</th>
                         <th>NIK</th>
                         <th>Jenis Kelamin</th>
-                        <th>Status</th>
+                        <th>Absen</th>
+                        <th>Checkout</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -34,6 +30,7 @@
                         <td><?= $user['nik']; ?></td>
                         <td><?= $user['jenis_kelamin']; ?></td>
                         <td><?= $user['absenLabel']; ?></td>
+                        <td><?= $user['checkoutLabel']; ?></td>
                         <td>
                             <a href="<?php echo base_url(); ?>/Admin/User/<?= $user['nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
                         </td>
@@ -46,10 +43,10 @@
                     <?php } ?>
                 </tbody>
             </table>
-            <div class="row">
-                <div class="col">
-                    <?= $pager->links('user', 'pagination') ?>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <?= $pager->links('user', 'pagination') ?>
             </div>
         </div>
     </div>

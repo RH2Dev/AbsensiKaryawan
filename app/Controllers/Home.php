@@ -25,27 +25,53 @@ class Home extends BaseController
     public function insert()
     {
    
-        // NIK Validation
         $today = date('Y-m-d');  
         $db = \Config\Database::connect();
+        // NIK Validation
+        $nik = $this->userModel->getUserByNIK($this->request->getVar('nik'));
+        // Ambil data absen user hari ini
         $builder = $db->table('data_absen');
         $builder->like('tanggal', $today);
         $builder->where('nik', $this->request->getVar('nik'));
         $absen = $builder->get();
-        $dataAbsen = $absen->getResultArray();
-        $nik = $this->userModel->getUserByNIK($this->request->getVar('nik'));
+        $checkin = $absen->getResultArray();
+        // Ambil data checkout user hari ini
+        $builder = $db->table('data_absen');
+        $builder->like('checkout', $today);
+        $builder->where('nik', $this->request->getVar('nik'));
+        $absen = $builder->get();
+        $checkout = $absen->getResultArray();
 
+        // cek apakah NIK Tersedia
         if (!empty($nik)) {
-            // Convert raw image data to file
-            if (!empty($dataAbsen)) {
+            // Cek apakah user sudah checkin & checkout
+            if (!empty($checkin) && !empty($checkout)) {
                 session()->setFlashdata('pesan', 'Anda Sudah Absen Hari ini');
                 return redirect()->back();
             }
 
+            // Convert raw image data to file
             $image = $this->request->getVar('photo');
             $imageData = str_replace('data:image/webp;base64,', '', $image);
             $file = base64_decode($imageData, true);
             $fileName = uniqid('', true).'-'.$this->request->getVar('nik').'.jpg';
+
+            // Jika user sudah absen, maka absensi dianggap checkout
+            if (!empty($checkin)) {
+
+                $this->absenModel->save([
+                    'absen_id' => $checkin[0]['absen_id'],
+                    'photoCheckout' => $fileName,
+                    'latCheckout' => $this->request->getVar('latitude'),
+                    'longCheckout' => $this->request->getVar('longitude'),
+                    'checkout' => date('Y-m-d H:i:s')
+                ]);
+
+                file_put_contents(FCPATH . 'img/' .$fileName, $file);
+    
+                session()->setFlashdata('pesan', 'Berhasil Checkout');
+                return redirect()->to('/');
+            }
 
             $data = [
                 'nik' => $this->request->getVar('nik'),

@@ -13,7 +13,7 @@
     <div class="card-body">            
         <div class="row">
             <?php $session = session()->get(); ?>
-            <div class="col-lg-8 mb-2">
+            <div class="col mb-2">
                 <?php if($session['adminStatus'] == 3 || $session['adminStatus'] == 1) {; ?>
                 <a href="<?php echo base_url(); ?>/Admin/User/formInsert" class="btn btn-primary btn-icon-split">
                     <span class="icon text-white-50">
@@ -50,7 +50,7 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($user)) { ?>
-                    <?php $i = 1 + (10 * ($currentPage - 1)); ?>
+                    <?php $i = 1; ?>
                     <?php foreach($user as $user) : ?>
                     <tr>
                         <td><?= $i++; ?></td>
@@ -60,9 +60,9 @@
                         <td><?= $user['nama_jabatan']; ?></td>
                         <td>
                             <a href="<?php echo base_url(); ?>/Admin/User/<?= $user['nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
-                            <?php if(($session['adminStatus'] == $user['jabatan_id'] && $session['adminStatus'] == 3) || ($user['jabatan_id'] == 4 || ($session['adminStatus'] == $user['jabatan_id'] && $session['adminStatus'] == 1)) || $session['adminStatus'] == 1) {; ?>   
+                            <?php if(($session['adminStatus'] == $user['jabatan_id'] && $session['adminStatus'] == 3) || $user['jabatan_id'] == 4 || $session['adminStatus'] == 1) {; ?>   
                                 <a href="<?php echo base_url(); ?>/Admin/User/formEdit/<?= $user['slug']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
-                                <?php if($user['uid'] == 4 || $session['adminStatus'] == 1 && $user['jabatan_id'] !== $session['adminStatus'] ) { ?>
+                                <?php if($user['uid'] == 4 || $session['adminStatus'] == 1) { ?>
                                     <form action="<?php echo base_url(); ?>/Admin/User/<?= $user['user_id']; ?>" method="post" class="d-inline">
                                         <?= csrf_field(); ?>
                                         <input type="hidden" name="_method" value="DELETE">
@@ -80,12 +80,6 @@
                     <?php } ?>
                 </tbody>
             </table>
-        </div>
-        
-        <div class="row">
-            <div class="col">
-                <?= $pager->links('user', 'pagination') ?>
-            </div>
         </div>
     </div>
 </div>

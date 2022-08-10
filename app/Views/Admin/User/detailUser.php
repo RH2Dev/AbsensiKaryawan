@@ -79,10 +79,10 @@
                     <?php } ?>
                 </tbody>
             </table>
-            <div class="row">
-                <div class="col">
-                    <?= $pager->links('user', 'pagination') ?>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <?= $pager->links('user', 'pagination') ?>
             </div>
         </div>
     </div>
