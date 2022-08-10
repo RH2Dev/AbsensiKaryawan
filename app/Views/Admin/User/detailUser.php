@@ -55,7 +55,9 @@
                     <tr>
                         <th>No</th>
                         <th>Tanggal</th>
+                        <th>Checkout</th>
                         <th>Lokasi</th>
+                        <th>Lokasi Checkout</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -66,7 +68,9 @@
                     <tr>
                         <td><?= $i++; ?></td>
                         <td><?= $absen['tanggal']; ?></td>
+                        <td><?= $absen['checkout']; ?></td>
                         <td><?= $absen['latitude']; ?> <?= $absen['longitude']; ?></td>
+                        <td><?= $absen['latCheckout']; ?> <?= $absen['longCheckout']; ?></td>
                         <td>
                             <a href="<?php echo base_url(); ?>/Admin/Absensi/<?= $absen['absen_id']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
                         </td>
