@@ -65,7 +65,7 @@
                                 <?php if ($session['adminStatus'] == $user['jabatan_id'] || $user['jabatan_id'] == 4) {?>
                                 <a href="<?php echo base_url(); ?>/Admin/User/formEdit/<?= $user['slug']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
                                 <?php } ?>
-                                <?php if(($user['uid'] == 4 || $session['adminStatus'] == 1) && ($user['jabatan_id'] !== $session['adminStatus'] || $session['adminStatus'] == 1)) { ?>
+                                <?php if(($user['uid'] == 4 || $session['adminStatus'] == 1) && $user['name'] !== $session['adminName']) { ?>
                                     <form action="<?php echo base_url(); ?>/Admin/User/<?= $user['user_id']; ?>" method="post" class="d-inline">
                                         <?= csrf_field(); ?>
                                         <input type="hidden" name="_method" value="DELETE">
