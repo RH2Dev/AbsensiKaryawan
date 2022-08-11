@@ -45,7 +45,7 @@
                                         </div>
                                     <?php endif; ?>
                                     <form class="user" action="<?= base_url(); ?>/Admin/resetCheck" method="POST">
-
+                                        <?= csrf_field(); ?>
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user <?= ($validation->hasError('nik') ? 'is-invalid' : ''); ?>" placeholder="Enter Your NIK..." id="nik" name="nik" value="<?= old('nik'); ?>">
                                             <div class="invalid-feedback"><?= $validation->getError('nik'); ?></div>

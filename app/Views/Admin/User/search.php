@@ -1,6 +1,8 @@
 <?= $this->extend('Admin/layout/template'); ?>
 
 <?= $this->section('content'); ?>
+<!-- Get Session Data -->
+<?php $session = session()->get(); ?>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-1 font-weight-bold text-primary">Data Karyawan</h6>
@@ -12,7 +14,6 @@
     </div>
     <div class="card-body">            
         <div class="row">
-            <?php $session = session()->get(); ?>
             <div class="col mb-2">
                 <?php if($session['adminStatus'] == 3 || $session['adminStatus'] == 1) {; ?>
                 <a href="<?php echo base_url(); ?>/Admin/User/formInsert" class="btn btn-primary btn-icon-split">

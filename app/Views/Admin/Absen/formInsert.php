@@ -8,6 +8,7 @@
     </div>
 
     <form id="absen" action="<?= base_url(); ?>/Admin/Absensi/insert" method="POST">
+        <?= csrf_field(); ?>
         <input id="latitude" type="hidden" name="latitude" value="<?= old('latitude'); ?>">
         <input id="longitude" type="hidden" name="longitude" value="<?= old('longitude'); ?>">
         <input class="data-photo" type="hidden" name="photo" value="<?= old('photo'); ?>">

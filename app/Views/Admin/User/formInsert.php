@@ -6,6 +6,7 @@
         <h1 class="h4 text-gray-900 mb-4">Tambah Data Karyawan</h1>
     </div>
     <form class="user" action="<?php echo base_url(); ?>/Admin/User/insertData" method="POST">
+        <?= csrf_field(); ?>
         <div class="mb-3">
             <label class="form-label">Nama Karyawan</label>
             <input type="text" class="form-control <?= ($validation->hasError('name') ? 'is-invalid' : ''); ?>" id="name" name="name" value="<?= old('name'); ?>">

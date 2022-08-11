@@ -7,6 +7,7 @@
         <h1 class="h4 text-gray-900 mb-4">Ubah Data Karyawan</h1>
     </div>
     <form class="user" action="<?php echo base_url(); ?>/Admin/User/updateData/<?= $user['user_id']; ?>" method="POST">
+        <?= csrf_field(); ?>
         <input type="hidden" class="form-control " id="slug" name="slug" value="<?= $user['slug']; ?>">
         <div class="mb-3">
             <label class="form-label">Nama Karyawan</label>

@@ -1,6 +1,8 @@
 <?= $this->extend('Admin/layout/template'); ?>
 
 <?= $this->section('content'); ?>
+<!-- Get Session data -->
+<?php $session = session()->get(); ?>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-1 font-weight-bold text-primary">Data Akun Admin</h6>
@@ -41,7 +43,6 @@
                         <th>Nama</th>
                         <th>Username</th>
                         <th>Email</th>
-                        <th>NIK</th>
                         <th>Jabatan</th>
                         <th>Crated At</th>
                         <th>Aksi</th>
@@ -56,16 +57,19 @@
                         <td><?= $admin['name']; ?></td>
                         <td><?= $admin['username']; ?></td>
                         <td><?= $admin['email']; ?></td>
-                        <td><?= $admin['nik']; ?></td>
                         <td><?= $admin['nama_jabatan']; ?></td>
                         <td><?= $admin['created_at']; ?></td>
                         <td>
-                            <a href="<?php echo base_url(); ?>/Admin/Admin/formEdit/<?= $admin['nik']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
-                            <form action="<?php echo base_url(); ?>/Admin/Admin/<?= $admin['admin_id']; ?>" method="post" class="d-inline">
-                                <?= csrf_field(); ?>
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah anda yakin?')">Delete</button>
-                            </form>
+                            <?php if($admin['jabatan_id'] == $session['adminStatus'] || $session['adminStatus'] == 1 || $session['adminStatus'] == 3) { ?>
+                                <a href="<?php echo base_url(); ?>/Admin/Admin/formEdit/<?= $admin['nik']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
+                                <?php if($admin['jabatan_id'] !== $session['adminStatus']) {?>
+                                    <form action="<?php echo base_url(); ?>/Admin/Admin/<?= $admin['admin_id']; ?>" method="post" class="d-inline">
+                                        <?= csrf_field(); ?>
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah anda yakin?')">Delete</button>
+                                    </form>
+                                <?php } ?>
+                            <?php } ?>
                         </td>
                     <?php endforeach; ?>
                     <?php } else { ?>

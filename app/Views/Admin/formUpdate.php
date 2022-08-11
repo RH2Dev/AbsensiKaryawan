@@ -6,6 +6,7 @@
         <h1 class="h4 text-gray-900 mb-4">Update Data Admin</h1>
     </div>
     <form class="user" action="<?php echo base_url(); ?>/Admin/Admin/Update/<?= $admin['admin_id']; ?>" method="POST">
+        <?= csrf_field(); ?>
         <input type="hidden" name="id" id="id" value="<?= $admin['admin_id']; ?>">
         <div class="mb-3">
             <label class="form-label">Username</label>

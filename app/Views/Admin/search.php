@@ -60,12 +60,16 @@
                         <td><?= $admin['nama_jabatan']; ?></td>
                         <td><?= $admin['created_at']; ?></td>
                         <td>
-                            <a href="<?php echo base_url(); ?>/Admin/Admin/formEdit/<?= $admin['nik']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
-                            <form action="<?php echo base_url(); ?>/Admin/Admin/<?= $admin['admin_id']; ?>" method="post" class="d-inline">
-                                <?= csrf_field(); ?>
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah anda yakin?')">Delete</button>
-                            </form>
+                            <?php if($admin['jabatan_id'] == $session['adminStatus'] || $session['adminStatus'] == 1 || $session['adminStatus'] == 3) { ?>
+                                <a href="<?php echo base_url(); ?>/Admin/Admin/formEdit/<?= $admin['nik']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
+                                <?php if($admin['jabatan_id'] !== $session['adminStatus']) {?>
+                                    <form action="<?php echo base_url(); ?>/Admin/Admin/<?= $admin['admin_id']; ?>" method="post" class="d-inline">
+                                        <?= csrf_field(); ?>
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah anda yakin?')">Delete</button>
+                                    </form>
+                                <?php } ?>
+                            <?php } ?>
                         </td>
                     <?php endforeach; ?>
                     <?php } else { ?>

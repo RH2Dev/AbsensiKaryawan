@@ -6,6 +6,7 @@
         <h1 class="h4 text-gray-900 mb-4">Tambah Data Admin</h1>
     </div>
     <form class="user" action="<?php echo base_url(); ?>/Admin/Admin/Insert" method="POST">
+        <?= csrf_field(); ?>
         <div class="mb-3">
             <label class="form-label">Username</label>
             <input type="text" class="form-control <?= ($validation->hasError('username') ? 'is-invalid' : ''); ?>" id="username" name="username" value="<?= old('username'); ?>">

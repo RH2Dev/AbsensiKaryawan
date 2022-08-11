@@ -1,6 +1,8 @@
 <?= $this->extend('Admin/layout/template'); ?>
 
 <?= $this->section('content'); ?>
+<!-- Get Session Data -->
+<?php $session = session()->get(); ?>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-1 font-weight-bold text-primary">Data Karyawan</h6>
@@ -12,7 +14,6 @@
     </div>
     <div class="card-body">            
         <div class="row">
-            <?php $session = session()->get(); ?>
             <div class="col-lg-8 mb-2">
                 <?php if($session['adminStatus'] == 3 || $session['adminStatus'] == 1) {; ?>
                 <a href="<?php echo base_url(); ?>/Admin/User/formInsert" class="btn btn-primary btn-icon-split">
@@ -60,9 +61,11 @@
                         <td><?= $user['nama_jabatan']; ?></td>
                         <td>
                             <a href="<?php echo base_url(); ?>/Admin/User/<?= $user['nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
-                            <?php if(($session['adminStatus'] == $user['jabatan_id'] && $session['adminStatus'] == 3) || ($user['jabatan_id'] == 4 || ($session['adminStatus'] == $user['jabatan_id'] && $session['adminStatus'] == 1)) || $session['adminStatus'] == 1) {; ?>   
+                            <?php if($session['adminStatus'] !== 2) {; ?>   
+                                <?php if ($session['adminStatus'] == $user['jabatan_id'] || $user['jabatan_id'] == 4) {?>
                                 <a href="<?php echo base_url(); ?>/Admin/User/formEdit/<?= $user['slug']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
-                                <?php if($user['uid'] == 4 || $session['adminStatus'] == 1 && $user['jabatan_id'] !== $session['adminStatus'] ) { ?>
+                                <?php } ?>
+                                <?php if(($user['uid'] == 4 || $session['adminStatus'] == 1) && ($user['jabatan_id'] !== $session['adminStatus'] || $session['adminStatus'] == 1)) { ?>
                                     <form action="<?php echo base_url(); ?>/Admin/User/<?= $user['user_id']; ?>" method="post" class="d-inline">
                                         <?= csrf_field(); ?>
                                         <input type="hidden" name="_method" value="DELETE">

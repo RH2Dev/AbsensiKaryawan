@@ -58,14 +58,14 @@
             <!-- Nav Item - Tables -->
             <?php $session = session()->get(); ?>
             <?php if(!empty($session['adminStatus'])) { ?>
-            <?php if($session['adminStatus'] == 1) {; ?>
-            <li class="nav-item">
-                <a class="nav-link" href="<?php echo base_url(); ?>/Admin/Admin">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Data Akun Admin</span>
-                </a>
-            </li>
-            <?php } else {} ?>
+                <?php if($session['adminStatus'] == 1) {; ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo base_url(); ?>/Admin/Admin">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span>Data Akun Admin</span>
+                    </a>
+                </li>
+                <?php } else {} ?>
             <?php } else {} ?>
             <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url(); ?>/Admin/User">

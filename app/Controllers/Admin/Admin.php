@@ -54,7 +54,7 @@ class Admin extends BaseController
         $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
         $data = [
             'title' => 'Data Admin',
-            'admin' => $this->authModel->join('user', 'auth.nik = user.nik')->join('jabatan', 'user.jabatan_id = jabatan.uid')->select('auth.*')->select('user.name')->select('jabatan.nama_jabatan')->paginate(10, 'admin'),
+            'admin' => $this->authModel->join('user', 'auth.nik = user.nik')->join('jabatan', 'user.jabatan_id = jabatan.uid')->select('auth.*')->select('user.*')->select('jabatan.nama_jabatan')->paginate(10, 'admin'),
             'pager' => $this->authModel->pager,
             'currentPage' => $currentPage
         ];

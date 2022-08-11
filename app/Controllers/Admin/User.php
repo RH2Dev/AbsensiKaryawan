@@ -6,17 +6,20 @@ use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\JabatanModel;
 use App\Models\AbsenModel;
+use App\Models\AuthModel;
 
 class User extends BaseController
 {
     protected $userModel;
     protected $jabatanModel;
     protected $absenModel;
+    protected $adminModel;
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->jabatanModel = new JabatanModel();
         $this->absenModel = new AbsenModel();
+        $this->authModel = new AuthModel();
     }
 
     // get all users
@@ -121,6 +124,26 @@ class User extends BaseController
 
     public function delete($user_id)
     {
+        $user = $this->userModel->where('user_id', $user_id)->first();
+        $absen = $this->absenModel->where('nik', $user['nik'])->first();
+        $db = \Config\Database::connect();
+        $dataAbsen = $db->table('data_absen');
+        $dataAbsen->select('*');
+        $dataAbsen->where('nik', $user['nik']);
+        $dataAbsen = $dataAbsen->get();
+        $dataAbsen = $dataAbsen->getResultArray();
+        $admin = $this->authModel->where('nik', $user['nik'])->first();
+
+        if (!empty($absen)) {
+            $this->absenModel->delete($absen['nik']);
+            foreach ($dataAbsen as $absen) {
+                unlink(FCPATH . 'img/' . $absen['photo']);
+                unlink(FCPATH . 'img/' . $absen['photoCheckout']);
+            }
+        }
+        if (!empty($admin)) {
+            $this->authModel->delete($admin['nik']);
+        }
         $this->userModel->delete($user_id);
         session()->setFlashdata('pesan', 'Data user sudah terhapus');
         return redirect()->to('/Admin/User');
