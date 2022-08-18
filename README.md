@@ -69,7 +69,7 @@ Additionally, make sure that the following extensions are enabled in your PHP:
   password : 123456
 - HR
   username : bayuskak
-  password : qwerty123
+  password : 123456
 - Manager
   username : sujakcingur
-  password : 123456
+  password : qwerty123
