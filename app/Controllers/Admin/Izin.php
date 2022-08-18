@@ -23,6 +23,11 @@ class Izin extends BaseController
     {
         
         $search = $this->request->getVar('search');
+        $izinYearBuilder = $this->izinModel;
+        $izinYearBuilder->distinct();
+        $izinYearBuilder->select('Year(izin_date)');
+        $izinYear = $izinYearBuilder->get();
+        $izinYear = $izinYear->getResultArray();
 
         if (!empty($search)) {
             $izin_arr = $this->izinModel->like('user_name', $search)->orWhere('izin_nik', $search)->select('izin.*')->select('status_izin_keterangan')->select('user_name')->join('status_izin', 'izin_status_id = status_izin_id')->join('user', 'user_nik = izin_nik')->paginate(10, 'izin');
@@ -33,6 +38,7 @@ class Izin extends BaseController
         $data = [
             'title' => 'Izin',
             'menu' => 'izin',
+            'izinYear' => $izinYear,
             'izin_arr' => $izin_arr,
             'pager' => $this->izinModel->pager,
             'currentPage' => $currentPage
@@ -199,10 +205,14 @@ class Izin extends BaseController
 
     public function export()
     {
+        $year = $this->request->getVar('year');
+        $month = $this->request->getVar('month');
+        $date = ''.$year.'-'.$month.'';
         $izinBuilder = $this->izinModel;
         $izinBuilder->select('izin.*');
         $izinBuilder->select('jabatan_nama');
         $izinBuilder->select('user_name');
+        $izinBuilder->like('izin_date', $date);
         $izinBuilder->select('status_izin_keterangan');
         $izinBuilder->join('user', 'user_nik = izin_nik');
         $izinBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');

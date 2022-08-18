@@ -6,8 +6,31 @@
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Data Izin</h1>
-    <a href="<?= base_url(); ?>/Admin/Izin/export" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-            class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+    <form action="<?php echo base_url(); ?>/Admin/Izin/export" style="display: flex;">
+        <label style="margin: auto 5px;">Tahun</label>
+        <select class="form-select" id="jabatan_id" name="year" style="width: 100px;">
+            <?php foreach ($izinYear as $year) : ?>
+            <option value="<?php echo $year['Year(izin_date)'] ?>"><?php echo $year['Year(izin_date)'] ?></option>
+            <?php endforeach; ?>
+        </select>
+        <label style="margin: auto 5px;">Bulan</label>
+        <select class="form-select" id="month" name="month">
+            <option value="" selected>Bulan</option>
+            <option value="01">Jan</option>
+            <option value="02">Feb</option>
+            <option value="03">Mar</option>
+            <option value="04">Apr</option>
+            <option value="05">Mei</option>
+            <option value="06">Jun</option>
+            <option value="07">Jul</option>
+            <option value="08">Agu</option>
+            <option value="09">Sep</option>
+            <option value="10">Okt</option>
+            <option value="11">Nov</option>
+            <option value="12">Des</option>
+        </select>
+        <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm ml-1"><i class="fas fa-download fa-sm text-white-50" ></i> Generate Report</button>
+    </form>
 </div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">

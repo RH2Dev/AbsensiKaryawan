@@ -12,7 +12,7 @@
             <?php endforeach; ?>
         </select>
         <label style="margin: auto 5px;">Bulan</label>
-        <select class="form-select" id="jabatan_id" name="month">
+        <select class="form-select" id="month" name="month">
             <option value="" selected>Bulan</option>
             <option value="01">Jan</option>
             <option value="02">Feb</option>
