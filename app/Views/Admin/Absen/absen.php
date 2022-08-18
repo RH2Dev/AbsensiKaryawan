@@ -1,18 +1,42 @@
 <?= $this->extend('Admin/layout/template'); ?>
 
 <?= $this->section('content'); ?>
-<?php if(session()->getFlashData('pesan')) : ?>
-    <div class="alert alert-success" role="alert">
-        <?= session()->getFlashdata('pesan'); ?>
-    </div>
-<?php endif; ?>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Data Absensi</h1>
+    <form action="<?php echo base_url(); ?>/Admin/Absensi/export" style="display: flex;">
+        <label style="margin: auto 5px;">Tahun</label>
+        <select class="form-select" id="jabatan_id" name="year" style="width: 100px;">
+            <?php foreach ($absenYear as $year) : ?>
+            <option value="<?php echo $year['Year(absen_datetime)'] ?>"><?php echo $year['Year(absen_datetime)'] ?></option>
+            <?php endforeach; ?>
+        </select>
+        <label style="margin: auto 5px;">Bulan</label>
+        <select class="form-select" id="jabatan_id" name="month">
+            <option value="" selected>Bulan</option>
+            <option value="01">Jan</option>
+            <option value="02">Feb</option>
+            <option value="03">Mar</option>
+            <option value="04">Apr</option>
+            <option value="05">Mei</option>
+            <option value="06">Jun</option>
+            <option value="07">Jul</option>
+            <option value="08">Agu</option>
+            <option value="09">Sep</option>
+            <option value="10">Okt</option>
+            <option value="11">Nov</option>
+            <option value="12">Des</option>
+        </select>
+        <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm ml-1"><i class="fas fa-download fa-sm text-white-50" ></i> Generate Report</button>
+    </form>
+</div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Data Absensi Karyawan</h6>
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-lg-6 mb-2">
+            <div class="col-lg-8 mb-2">
                 <a href="<?php echo base_url(); ?>/Admin/Absensi/formInsert" class="btn btn-primary btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-flag"></i>
@@ -20,13 +44,8 @@
                     <span class="text">Tambah Data Absensi</span>
                 </a>
             </div>
-            <div class="col-lg-2 mb-2">
-                <a href="<?= base_url(); ?>/Admin/Absensi/export" class="btn btn-primary btn-icon-split flex-end">
-                    <span class="text">Export to Excel</span>
-                </a>
-            </div>
             <div class="col-lg-4 mb-2">
-                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="<?= base_url(); ?>/Admin/Absensi/search" method="GET">
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="<?= base_url(); ?>/Admin/Absensi">
                     <div class="input-group">
                         <input type="text" class="form-control bg-light border-0 small" placeholder="Cari data Absensi" aria-label="Search" aria-describedby="basic-addon2" name="search" id="search">
                             <div class="input-group-append">
@@ -53,16 +72,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($absen)) { ?>
+                    <?php if (!empty($absen_arr)) { ?>
                     <?php $i = 1 + (10 * ($currentPage - 1)); ?>
-                    <?php foreach($absen as $absen) : ?>
+                    <?php foreach($absen_arr as $absen) : ?>
                     <tr>
                         <td><?= $i++; ?></td>
-                        <td><?= $absen['name']; ?></td>
-                        <td><?= $absen['tanggal']; ?></td>
-                        <td><?= $absen['checkout']; ?></td>
-                        <td><?= $absen['latitude'] .' '. $absen['longitude']; ?></td>
-                        <td><?= $absen['latCheckout'] .' '. $absen['longCheckout']; ?></td>
+                        <td><?= $absen['user_name']; ?></td>
+                        <td><?= $absen['absen_datetime']; ?></td>
+                        <td><?= $absen['absen_checkout_datetime']; ?></td>
+                        <td><?= $absen['absen_latitude'] .' '. $absen['absen_longitude']; ?></td>
+                        <td><?= $absen['absen_latitude_checkout'] .' '. $absen['absen_longitude_checkout']; ?></td>
                         <td>
                             <a href="<?php echo base_url(); ?>/Admin/Absensi/<?= $absen['absen_id']; ?>"><button type="button" class="btn btn-warning">Details</button></a></td>
                     </tr>

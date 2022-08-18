@@ -11,6 +11,7 @@ if (is_file(SYSTEMPATH . 'Config/Routes.php')) {
     require SYSTEMPATH . 'Config/Routes.php';
 }
 
+
 /*
  * --------------------------------------------------------------------
  * Router Setup
@@ -20,6 +21,7 @@ $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
+$routes->setAutoRoute(true);
 $routes->set404Override();
 // The Auto Routing (Legacy) is very dangerous. It is easy to create vulnerable apps
 // where controller filters or CSRF protection are bypassed.
@@ -41,59 +43,75 @@ $routes->post('/insert', 'Home::insert');
 
 // ROUTING LOGIN SYSTEM ADMIN
 // route login & logout
-$routes->get('/Admin/Login', 'Auth::index', ['filter'=>'LogedIn']);
+$routes->get('/Admin/Login', 'Auth::index');
 $routes->post('/Admin/Check', 'Auth::login');
-$routes->get('/Admin/Logout', 'Auth::logout', ['filter'=>'Login']);
+$routes->get('/Admin/Logout', 'Auth::logout');
 // forgotPassword route
 $routes->get('/Admin/forgotPassword', 'Auth::forgotPasswordForm');
 $routes->post('/Admin/resetCheck', 'Auth::resetCheck');
 
-
-$routes->get('/Admin', 'Admin\Admin::index', ['filter'=>'Login']);
+// Route Dasboard Admin
+$routes->get('/Admin', 'Admin\Admin::index');
+$routes->get('/Admin/PreviewPdf', 'Admin\Admin::previewPdf');
 
 // ROUTING CRUD DATA ADMIN
 // route get all admin data
-$routes->get('/Admin/Admin', 'Admin\Admin::admin', ['filter'=>'CEO']);
+$routes->get('/Admin/Admin', 'Admin\Admin::admin');
 // route search data admin
-$routes->get('/Admin/Admin/search', 'Admin\Admin::search', ['filter'=>'CEO']);
+$routes->get('/Admin/Admin/search', 'Admin\Admin::search');
 // route form & insert admin data
-$routes->get('/Admin/Admin/formInsert', 'Admin\Admin::formInsert', ['filter'=>'CEO']);
-$routes->post('/Admin/Admin/Insert', 'Admin\Admin::insert', ['filter'=>'CEO']);
+$routes->get('/Admin/Admin/formInsert', 'Admin\Admin::formInsert');
+$routes->post('/Admin/Admin/Insert', 'Admin\Admin::insert');
 // route form & update admin data
-$routes->get('/Admin/Admin/formEdit/(:num)', 'Admin\Admin::formUpdate/$1', ['filter'=>'CEO']);
-$routes->post('/Admin/Admin/Update/(:num)', 'Admin\Admin::update/$1', ['filter'=>'CEO']);
+$routes->get('/Admin/Admin/formEdit/(:num)', 'Admin\Admin::formUpdate/$1');
+$routes->post('/Admin/Admin/Update/(:num)', 'Admin\Admin::update/$1');
 // route delete single user data 
-$routes->delete('/Admin/Admin/(:num)', 'Admin\Admin::delete/$1', ['filter'=>'CEO']);
+$routes->delete('/Admin/Admin/(:num)', 'Admin\Admin::delete/$1');
 
 // ROUTING CRUD DATA USER
 // route get all user data 
-$routes->get('/Admin/User', 'Admin\User::user', ['filter'=>'Login']);
+$routes->get('/Admin/User', 'Admin\User::index');
 // route delete single user data 
-$routes->delete('/Admin/User/(:num)', 'Admin\User::delete/$1', ['filter'=>'HRCEO']);
+$routes->delete('/Admin/User/(:num)', 'Admin\User::delete/$1');
 // route search data user
-$routes->get('/Admin/User/search', 'Admin\User::search', ['filter'=>'Login']);
+$routes->get('/Admin/User/search', 'Admin\User::search');
 // route form & insert user data 
-$routes->get('/Admin/User/formInsert', 'Admin\User::formInsert', ['filter'=>'HRCEO']);
-$routes->post('/Admin/User/insertData', 'Admin\User::insert', ['filter'=>'HRCEO']);
+$routes->get('/Admin/User/formInsert', 'Admin\User::formInsert');
+$routes->post('/Admin/User/insert', 'Admin\User::insert');
 // route form & update user data 
-$routes->get('/Admin/User/formEdit/(:segment)', 'Admin\User::formEdit/$1', ['filter'=>'HRCEO']);
-$routes->post('/Admin/User/updateData/(:num)', 'Admin\User::update/$1', ['filter'=>'HRCEO']);
+$routes->get('/Admin/User/formEdit/(:segment)', 'Admin\User::formEdit/$1');
+$routes->post('/Admin/User/update/(:num)', 'Admin\User::update/$1');
 // route get single user 
-$routes->get('/Admin/User/(:num)', 'Admin\User::detail/$1', ['filter'=>'Login']);
+$routes->get('/Admin/User/(:num)', 'Admin\User::detail/$1');
 
 // ROUTING ABSEN
 // route get all absen data 
-$routes->get('/Admin/Absensi', 'Admin\Absen::absen', ['filter'=>'Login']);
-// route search absen data
-$routes->get('/Admin/Absensi/search', 'Admin\Absen::search', ['filter'=>'Login']);
+$routes->get('/Admin/Absensi', 'Admin\Absen::index');
 // route get insert & form absen 
-$routes->get('/Admin/Absensi/formInsert', 'Admin\Absen::formInsert', ['filter'=>'Login']);
-$routes->post('/Admin/Absensi/insert', 'Admin\Absen::insert', ['filter'=>'Login']);
+$routes->get('/Admin/Absensi/formInsert', 'Admin\Absen::formInsert');
+$routes->post('/Admin/Absensi/insert', 'Admin\Absen::insert');
 // routes get detail absen data
-$routes->get('/Admin/Absensi/(:num)', 'Admin\Absen::detail/$1', ['filter'=>'Login']);
+$routes->get('/Admin/Absensi/(:num)', 'Admin\Absen::detail/$1');
 // routes export data absen ke excel
-$routes->get('/Admin/Absensi/export', 'Admin\Absen::export', ['filter'=>'Login']);
+$routes->get('/Admin/Absensi/export', 'Admin\Absen::export');
+// route search absen data
+$routes->get('/Admin/Absensi/search', 'Admin\Absen::search');
 
+// ROUTING IZIN
+// route get all data izin
+$routes->get('/Admin/Izin', 'Admin\Izin::index');
+// route get insert & form izin 
+$routes->get('/Admin/Izin/formIzin', 'Admin\Izin::formIzin');
+$routes->post('/Admin/Izin/insert', 'Admin\Izin::insert');
+// route delete single izin data
+$routes->delete('/Admin/Izin/(:num)', 'Admin\Izin::delete/$1');
+// route form & update izin data 
+$routes->get('/Admin/Izin/formEdit/(:segment)', 'Admin\Izin::formEdit/$1');
+$routes->post('/Admin/Izin/update/(:num)', 'Admin\Izin::update/$1');
+// route search izin data
+$routes->get('/Admin/Izin/search', 'Admin\Izin::search');
+// route get single izin data 
+$routes->get('/Admin/Izin/(:num)', 'Admin\Izin::detail/$1');
 
 
 /*

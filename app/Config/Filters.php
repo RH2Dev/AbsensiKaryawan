@@ -9,9 +9,11 @@ use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\SecureHeaders;
 use App\Filters\Login;
-use App\Filters\LogedIn;
 use App\Filters\CEO;
 use App\Filters\HRCEO;
+use App\Filters\LogedIn;
+
+use function PHPSTORM_META\map;
 
 class Filters extends BaseConfig
 {
@@ -29,8 +31,8 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'Login' => Login::class,
         'LogedIn' => LogedIn::class,
-        'CEO' => [ Login::class, CEO::class],
-        'HRCEO' => [ Login::class, HRCEO::class],
+        'CEO' => CEO::class,
+        'HRCEO' => HRCEO::class,
     ];
 
     /**
@@ -41,10 +43,7 @@ class Filters extends BaseConfig
      */
     public $globals = [
         'before' => [
-            // 'honeypot',
-            // 'login',
-            // 'csrf',
-            // 'invalidchars',
+
         ],
         'after' => [
             'toolbar',
@@ -78,5 +77,35 @@ class Filters extends BaseConfig
      * @var array
      */
     public $filters = [
+        'Login' => ['before' =>  
+            [
+                'Admin',
+                'Admin/User',
+                'Admin/Absen',
+                'Admin/Admin',
+                'Admin/Izin',
+                'Admin/User/*',
+                'Admin/Absen/*',
+                'Admin/Admin/*',
+                'Admin/Izin/*'
+            ]
+        ],
+        'LogedIn' => ['before' => 
+            [
+                'Admin/Login',
+                'Admin/Check'
+            ]
+        ],
+        'CEO' => ['before' => 
+            [
+                'Admin/Admin',
+                'Admin/Admin/*'
+            ]
+        ],
+        'HRCEO' => ['before' => 
+            [
+                'Admin/User/*'
+            ]
+        ]
     ];
 }

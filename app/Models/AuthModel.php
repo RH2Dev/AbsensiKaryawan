@@ -7,9 +7,16 @@ use CodeIgniter\Model;
 class AuthModel extends Model
 {
     protected $table = "auth";
-    protected $primaryKey = "admin_id";
+    protected $primaryKey = "auth_id";
     protected $useTimestamps = true;
-    protected $allowedFields = ['username', 'email', 'password', 'nik'];
+    protected $createdField  = 'auth_created_datetime';
+    protected $updatedField  = 'auth_updated_datetime';
+    protected $allowedFields = [
+        'auth_username',
+        'auth_email',
+        'auth_password',
+        'auth_nik'
+    ];
 
     public function getAdmin($nik = false)
     {
@@ -17,15 +24,6 @@ class AuthModel extends Model
             return $this->findAll();
         }
 
-        return $this->where(['nik' => $nik])->first();
-    }
-
-    public function getAdminByUsername($username = false)
-    {
-        if ($username == false) {
-            return $this->findAll();
-        }
-
-        return $this->where(['username' => $username])->first();
+        return $this->where(['auth_nik' => $nik])->first();
     }
 }

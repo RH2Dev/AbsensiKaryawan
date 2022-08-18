@@ -8,5 +8,5 @@ class JabatanModel extends Model
 {
     protected $table = "jabatan";
     protected $primaryKey = "jabatan_id";
-    protected $allowedFields = ['nama_jabatan'];
+    protected $allowedFields = ['jabatan_nama'];
 }

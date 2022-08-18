@@ -29,9 +29,9 @@
 
     
 	<?php
-    $today = date('Y-m-d');
-	header("Content-type: application/vnd-ms-excel");
-	header("Content-Disposition: attachment; filename=Data Absensi-". $today .".xls");
+		$today = date('Y-m-d');
+		header("Content-type: application/vnd-ms-excel");
+		header("Content-Disposition: attachment; filename=Data Absensi-". $today .".xls");
 	?>
  
 	<center>
@@ -49,15 +49,15 @@
             <th>Tanggal Checkout</th>
 		</tr>
         <?php $i = 1 ?>
-        <?php foreach($absen as $absen) : ?>
+        <?php foreach($absen_arr as $absen) : ?>
 		<tr>
 			<td><?= $i++; ?></td>
-			<td><?= $absen['name']; ?></td>
-			<td><?= $absen['nik']; ?></td>
-			<td><?= $absen['latitude']; ?> <?= $absen['longitude']; ?></td>
-			<td><?= $absen['latCheckout']; ?> <?= $absen['longCheckout']; ?></td>
-            <td><?= $absen['tanggal']; ?></td>
-            <td><?= $absen['checkout']; ?></td>
+			<td><?= $absen['user_name']; ?></td>
+			<td><?= $absen['absen_nik']; ?></td>
+			<td><?= $absen['absen_latitude']; ?> <?= $absen['absen_longitude']; ?></td>
+			<td><?= $absen['absen_latitude_checkout']; ?> <?= $absen['absen_longitude_checkout']; ?></td>
+            <td><?= $absen['absen_datetime']; ?></td>
+            <td><?= $absen['absen_checkout_datetime']; ?></td>
 		</tr>
         <?php endforeach; ?>
 	</table>

@@ -3,19 +3,19 @@
 <?= $this->section('content'); ?>
 
 <?php $session = session()->get(); ?>
-<?php foreach($absen as $absen) : ?>
+<?php foreach($absen_arr as $absen) : ?>
 <div class="row">
     <div class="col-lg-6 mb-3">
         <div class="card bg-dark text-white shadow">
             <div class="card-body">
-                <img src="<?= base_url(); ?>/img/<?= $absen['photo']; ?>" alt="" width="100%">
+                <img src="<?= base_url(); ?>/img/<?= $absen['absen_photo']; ?>" alt="" width="100%">
             </div>
         </div>
     </div>
     <div class="col-lg-6 mb-3">
         <div class="card bg-dark text-white shadow">
             <div class="card-body">
-                <img src="<?= base_url(); ?>/img/<?= $absen['photoCheckout']; ?>" alt="" width="100%">
+                <img src="<?= base_url(); ?>/img/<?= $absen['absen_photo_checkout']; ?>" alt="" width="100%">
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     Nama Karyawan
-                    <div class="text-white-50 small"><?= $absen['name']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['user_name']; ?></div>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     NIK Karyawan
-                    <div class="text-white-50 small"><?= $absen['nik']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['absen_nik']; ?></div>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     Jabatan
-                    <div class="text-white-50 small"><?= $absen['nama_jabatan']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['jabatan_nama']; ?></div>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     Jenis Kelamin
-                    <div class="text-white-50 small"><?= $absen['jenis_kelamin']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['user_jenis_kelamin']; ?></div>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     Tanggal Absensi
-                    <div class="text-white-50 small"><?= $absen['tanggal']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['absen_datetime']; ?></div>
                 </div>
             </div>
         </div>
@@ -68,15 +68,15 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     Lokasi
-                    <div class="text-white-50 small"><?= $absen['latitude']; ?> <?= $absen['longitude']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['absen_latitude']; ?> <?= $absen['absen_longitude']; ?></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 mb-3">
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
-                    Tanggal Absensi
-                    <div class="text-white-50 small"><?= $absen['checkout']; ?></div>
+                    Tanggal Checkout
+                    <div class="text-white-50 small"><?= $absen['absen_checkout_datetime']; ?></div>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
             <div class="card bg-dark text-white shadow">
                 <div class="card-body">
                     Lokasi
-                    <div class="text-white-50 small"><?= $absen['latCheckout']; ?> <?= $absen['latCheckout']; ?></div>
+                    <div class="text-white-50 small"><?= $absen['absen_latitude_checkout']; ?> <?= $absen['absen_longitude_checkout']; ?></div>
                 </div>
             </div>
         </div>
@@ -92,10 +92,10 @@
 </div>
 
 <?php
-    $lat = $absen['latitude'];
-    $long = $absen['longitude'];
-    $latCheckout = $absen['latCheckout'];
-    $longCheckout = $absen['longCheckout'];
+    $lat = $absen['absen_latitude'];
+    $long = $absen['absen_longitude'];
+    $latCheckout = $absen['absen_latitude_checkout'];
+    $longCheckout = $absen['absen_longitude_checkout'];
 ?>
 
 <?php endforeach; ?>

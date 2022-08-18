@@ -15,7 +15,7 @@ class CEO implements FilterInterface
         $session = session()->get();
         if($session['adminStatus'] != 1) {
             return redirect()->to('Admin');
-        } else {}
+        }
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)

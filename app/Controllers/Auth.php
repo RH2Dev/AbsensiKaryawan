@@ -8,6 +8,7 @@ use App\Models\UserModel;
 class Auth extends BaseController
 {
     protected $authModel;
+    protected $userModel;
     public function __construct()
     {
         $this->userModel = new UserModel();
@@ -30,10 +31,10 @@ class Auth extends BaseController
         // Form validator
         if(!$this->validate([
             'username' => [
-                'rules' => 'required|alpha|is_not_unique[auth.username]',
+                'rules' => 'required|alpha_numeric_punct|is_not_unique[auth.auth_username]',
                 'errors' => [
                     'required' => 'Username harus diisi gan',
-                    'alpha' => 'Username tidak sesuai format',
+                    'alpha_numeric_punct' => 'Username tidak sesuai format',
                     'is_not_unique' => 'Username tidak terdaftar'
                 ]
             ],
@@ -49,13 +50,11 @@ class Auth extends BaseController
         }
         
         // get admin data by username 
-        $username = $this->request->getVar('username');
-        $dataAdmin = $this->authModel->getAdminByUsername($username);
+        $dataAdmin = $this->authModel->where('auth_username', $this->request->getVar('username'))->first();
 
-        // echo '<pre>'; print_r($dataAdmin); die;
         // save password data to variable
         $password = $this->request->getVar('password');
-        $hashPassword = $dataAdmin['password'];
+        $hashPassword = $dataAdmin['auth_password'];
         // verify password match
         $checkpwd = password_verify($password, $hashPassword);
 
@@ -64,22 +63,22 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('validation', $validation);
         }       
         // get full admin data with join user & jabatan
-        $db = \Config\Database::connect();
-        $builder = $db->table('auth');
-        $builder->join('user', 'auth.nik = user.nik');
-        $builder->join('jabatan', 'user.jabatan_id = jabatan.uid');
-        $builder->select('auth.*');
-        $builder->select('user.name');
-        $builder->select('jabatan.*');
-        $builder->where('username', $username);
-        $query = $builder->get();
-        $admin = $query->getResultArray();
+        $authBuilder = $this->authModel;
+        $authBuilder->select('auth_id');
+        $authBuilder->select('jabatan_id');
+        $authBuilder->select('user_name');
+        $authBuilder->where('auth_username', $this->request->getVar('username'));
+        $authBuilder->join('user', 'auth_nik = user_nik');
+        $authBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
+        $auth = $authBuilder->get();
+        $auth_arr = $auth->getResultArray();
+
         // session data config
-        foreach($admin as $admin) {
+        foreach($auth_arr as $admin) {
             $dataSession = [
-                'adminId' => $admin['admin_id'],
-                'adminStatus' => $admin['uid'],
-                'adminName' => $admin['name']
+                'adminId' => $admin['auth_id'],
+                'adminStatus' => $admin['jabatan_id'],
+                'adminName' => $admin['user_name']
             ];
         }
         session()->set($dataSession);
@@ -101,23 +100,23 @@ class Auth extends BaseController
         // Form Validator
         if(!$this->validate([
             'nik' => [
-                'rules' => 'required|numeric|is_not_unique[auth.nik]',
+                'rules' => 'required|alpha_numeric_punct|is_not_unique[auth.auth_nik]',
                 'errors' => [
                     'required' => 'NIK harus diisi gan',
-                    'numeric' => 'NIK tidak sesuai format',
+                    'alpha_numeric_punct' => 'NIK hanya boleh berisi angka dan huruf',
                     'is_not_unique' => 'NIK tidak terdaftar'
                 ]
             ],
             'username' => [
-                'rules' => 'required|alpha|is_not_unique[auth.username]',
+                'rules' => 'required|alpha_numeric_punct|is_not_unique[auth.auth_username]',
                 'errors' => [
                     'required' => 'Username harus diisi gan',
-                    'alpha' => 'Username tidak sesuai format',
+                    'alpha_numeric_punct' => 'Username tidak sesuai format',
                     'is_not_unique' => 'Username tidak terdaftar'
                 ]
             ],
             'email' => [
-                'rules' => 'required|valid_email|is_not_unique[auth.email]',
+                'rules' => 'required|valid_email|is_not_unique[auth.auth_email]',
                 'errors' => [
                     'required' => 'Email harus diisi gan',
                     'valid_email' => 'Email tidak sesuai format',
@@ -125,9 +124,10 @@ class Auth extends BaseController
                 ]
             ],
             'password' => [
-                'rules' => 'required',
+                'rules' => 'required|max_length[25]',
                 'errors' => [
-                    'required' => 'Passwordnya manaa....'
+                    'required' => 'Passwordnya manaa....',
+                    'max_length' => 'Password tidak boleh melebihi 25 karakter'
                 ]
             ],
             'confirmPwd' => [
@@ -142,31 +142,28 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('validation', $validation);
         }
 
-        
-        $db = \Config\Database::connect();
-        $builder = $db->table('auth');
-        $builder->select('*');
-        $builder->where('nik', $this->request->getVar('nik'));
-        $builder->where('username', $this->request->getVar('username'));
-        $builder->where('email', $this->request->getVar('email'));
-        $builder->limit(1);
-        $admin = $builder->get();
+        $authBuilder = $this->authModel;
+        $authBuilder->select('*');
+        $authBuilder->where('auth_nik', $this->request->getVar('nik'));
+        $authBuilder->where('auth_username', $this->request->getVar('username'));
+        $authBuilder->where('auth_email', $this->request->getVar('email'));
+        $auth = $authBuilder->get();
+        $auth_arr = $auth->getResultArray();
 
-        if (empty($admin->getResultArray()))
+        if (empty($auth_arr))
         {
             session()->setFlashdata('pesan', 'Akun Tidak Sesuai');
             return redirect()->back()->withInput();
         }
 
-        $dataAdmin = $this->authModel->getAdmin($this->request->getVar('nik'));
         $password = $this->request->getVar('confirmPwd');
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         
         // echo '<pre>'; print_r($dataAdmin); die;
         $this->authModel->save([
-            'admin_id' => $dataAdmin['admin_id'],
-            'password' => $passwordHash
+            'auth_id' => $auth_arr[0]['auth_id'],
+            'auth_password' => $passwordHash
         ]);
 
         session()->setFlashdata('resetSuccess', 'Berhasil Reset Password Anda Silahkan coba login kembali');

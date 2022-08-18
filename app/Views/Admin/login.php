@@ -38,7 +38,7 @@
                                 <div class="p-5">
                                 <?php if(session()->getFlashData('resetSuccess')) : ?>
                                     <div class="alert alert-success" role="alert">
-                                        <?= session()->getFlashdata('resetSuccess'); ?>
+                                        <?php echo session()->getFlashdata('resetSuccess'); ?>
                                     </div>
                                 <?php endif; ?>
                                     <div class="text-center">
@@ -46,7 +46,7 @@
                                     </div>
                                     <form class="user" action="<?= base_url(); ?>/Admin/Check" method="POST">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user <?= ($validation->hasError('username') ? 'is-invalid' : ''); ?>" placeholder="Enter Username..." id="username" name="username" value="<?= old('username'); ?>">
+                                            <input type="text" class="form-control form-control-user <?php echo ($validation->hasError('username') ? 'is-invalid' : ''); ?>" placeholder="Enter Username..." id="username" name="username" value="<?= old('username'); ?>">
                                             <div class="invalid-feedback"><?= $validation->getError('username'); ?></div>
                                         </div>
                                         <div class="form-group">

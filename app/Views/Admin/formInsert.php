@@ -31,8 +31,8 @@
             <label class="form-label">Karyawan Penanggung Jawab Akun</label>
             <select class="form-select <?= ($validation->hasError('nik') ? 'is-invalid' : ''); ?>" id="nik" name="nik">
                 <option selected disabled>Pilih Karyawan</option>
-                <?php foreach($user as $user) : ?>
-                <option value="<?= $user['nik']; ?>" <?= (old('nik') === $user['nik'] ? 'selected' : ''); ?>><?= $user['name']; ?></option>
+                <?php foreach($user_arr as $user) : ?>
+                <option value="<?= $user['user_nik']; ?>" <?= (old('nik') === $user['user_nik'] ? 'selected' : ''); ?>><?= $user['user_name']; ?></option>
                 <?php endforeach; ?>
             </select>
             <div class="invalid-feedback"><?= $validation->getError('nik'); ?></div>

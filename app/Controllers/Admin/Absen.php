@@ -15,12 +15,27 @@ class Absen extends BaseController
         $this->absenModel = new AbsenModel();
     }
 
-    public function absen()
+    public function index()
     {
+        $search = $this->request->getVar('search');
+        $absenYearBuilder = $this->absenModel;
+        $absenYearBuilder->distinct();
+        $absenYearBuilder->select('Year(absen_datetime)');
+        $absenYear = $absenYearBuilder->get();
+        $absenYear = $absenYear->getResultArray();
+
+        if (!empty($search)) {
+            $absen_arr = $this->absenModel->like('user_name', $search)->orLike('absen_datetime', $search)->orWhere('absen_nik', $search)->join('user', 'user_nik = absen_nik')->orderBy('absen_datetime', 'DESC')->paginate(10, 'absen');
+        } else {
+            $absen_arr = $this->absenModel->join('user', 'user_nik = absen_nik')->orderBy('absen_datetime', 'DESC')->paginate(10, 'absen');
+        }
+
         $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
         $data = [
             'title' => 'Absensi',
-            'absen' => $this->absenModel->join('user', 'user.nik = data_absen.nik')->orderBy('tanggal', 'DESC')->paginate(10, 'absen'),
+            'menu' => 'absensi',
+            'absenYear' => $absenYear,
+            'absen_arr' => $absen_arr,
             'pager' => $this->absenModel->pager,
             'currentPage' => $currentPage
         ];
@@ -32,17 +47,18 @@ class Absen extends BaseController
     {
         
         $db = \Config\Database::connect();
-        $builder = $db->table('data_absen');
-        $builder->join('user', 'user.nik = data_absen.nik');
-        $builder->join('jabatan', 'user.jabatan_id = jabatan.uid');
-        $builder->select('data_absen.*');
-        $builder->select('user.*');
-        $builder->select('jabatan.nama_jabatan');
-        $builder->where('absen_id', $id);
-        $absen = $builder->get();
+        $absen_builder = $db->table('absen');
+        $absen_builder->select('absen.*');
+        $absen_builder->select('user.*');
+        $absen_builder->select('jabatan.jabatan_nama');
+        $absen_builder->join('user', 'user_nik = absen_nik');
+        $absen_builder->join('jabatan', 'user_jabatan_id = jabatan_id');
+        $absen_builder->where('absen_id', $id);
+        $absen = $absen_builder->get();
         $data = [
             'title' => 'Absensi',
-            'absen' => $absen->getResultArray()
+            'menu' => 'absensi',
+            'absen_arr' => $absen->getResultArray()
         ];
 
         
@@ -53,7 +69,8 @@ class Absen extends BaseController
     {
         
         $data = [
-            'title' => 'Tambah Data Absen',
+            'title' => 'Form Insert Absen',
+            'menu' => 'absensi',
             'validation' => \Config\Services::validation()
         ];
 
@@ -63,27 +80,25 @@ class Absen extends BaseController
     public function insert()
     {
 
-        $today = date('Y-m-d');  
-        $db = \Config\Database::connect();
+        $todayDate = date('Y-m-d');
         // NIK Validation
         $nik = $this->userModel->getUserByNIK($this->request->getVar('nik'));
         // Ambil data absen user hari ini
-        $builder = $db->table('data_absen');
-        $builder->like('tanggal', $today);
-        $builder->where('nik', $this->request->getVar('nik'));
-        $absen = $builder->get();
-        $checkin = $absen->getResultArray();
-        // Ambil data checkout user hari ini
-        $builder = $db->table('data_absen');
-        $builder->like('checkout', $today);
-        $builder->where('nik', $this->request->getVar('nik'));
-        $absen = $builder->get();
-        $checkout = $absen->getResultArray();
+        $absenBuilder = $this->absenModel;
+        $absenBuilder->like('absen_datetime', $todayDate);
+        $absenBuilder->where('absen_nik', $this->request->getVar('nik'));
+        $absen = $absenBuilder->get();
+        $absen_arr = $absen->getResultArray();
+
+        if ($nik['user_jabatan_id'] != 4) {
+            session()->setFlashdata('pesan', 'Hanya karyawan yang perlu absen');
+            return redirect()->back();
+        }
 
         // cek apakah NIK Tersedia
         if (!empty($nik)) {
-            // Cek apakah user sudah checkin & checkout
-            if (!empty($checkin) && !empty($checkout)) {
+            // Cek apakah user sudah absen & checkout
+            if (!empty($absen_arr[0]['absen_datetime']) && !empty($absen_arr[0]['absen_checkout_datetime'])) {
                 session()->setFlashdata('pesan', 'Anda Sudah Absen Hari ini');
                 return redirect()->back();
             }
@@ -95,28 +110,28 @@ class Absen extends BaseController
             $fileName = uniqid('', true).'-'.$this->request->getVar('nik').'.jpg';
 
             // Jika user sudah absen, maka absensi dianggap checkout
-            if (!empty($checkin)) {
+            if (!empty($absen_arr)) {
 
                 $this->absenModel->save([
-                    'absen_id' => $checkin[0]['absen_id'],
-                    'photoCheckout' => $fileName,
-                    'latCheckout' => $this->request->getVar('latitude'),
-                    'longCheckout' => $this->request->getVar('longitude'),
-                    'checkout' => date('Y-m-d H:i:s')
+                    'absen_id' => $absen_arr[0]['absen_id'],
+                    'absen_photo_checkout' => $fileName,
+                    'absen_latitude_checkout' => $this->request->getVar('latitude'),
+                    'absen_longitude_checkout' => $this->request->getVar('longitude'),
+                    'absen_checkout_datetime' => date('Y-m-d H:i:s')
                 ]);
 
                 file_put_contents(FCPATH . 'img/' .$fileName, $file);
     
                 session()->setFlashdata('pesan', 'Berhasil Checkout');
-                return redirect()->to('Admin/Absensi/formInsert');
+                return redirect()->to('/Admin/Absensi/formInsert');
             }
 
             $data = [
-                'nik' => $this->request->getVar('nik'),
-                'photo' => $fileName,
-                'latitude' => $this->request->getVar('latitude'),
-                'longitude' => $this->request->getVar('longitude'),
-                'tanggal' => date('Y-m-d H:i:s')
+                'absen_nik' => $this->request->getVar('nik'),
+                'absen_photo' => $fileName,
+                'absen_latitude' => $this->request->getVar('latitude'),
+                'absen_longitude' => $this->request->getVar('longitude'),
+                'absen_datetime' => date('Y-m-d H:i:s')
             ];
 
             // insert input to database
@@ -125,7 +140,7 @@ class Absen extends BaseController
                 file_put_contents(FCPATH . 'img/' .$fileName, $file);
 
                 session()->setFlashdata('pesan', 'Berhasil absen');
-                return redirect()->to('Admin/Absensi/formInsert');
+                return redirect()->to('/Admin/Absensi/formInsert');
             };
 
             return redirect()->back()->withInput();
@@ -138,35 +153,23 @@ class Absen extends BaseController
 
     public function export()
     {
-        $db = \Config\Database::connect();
-        $builder = $db->table('data_absen');
-        $builder->join('user', 'user.nik = data_absen.nik');
-        $builder->join('jabatan', 'user.jabatan_id = jabatan.uid');
-        $builder->select('data_absen.*');
-        $builder->select('user.*');
-        $builder->select('jabatan.nama_jabatan');
-        $absen = $builder->get();
+        $year = $this->request->getVar('year');
+        $month = $this->request->getVar('month');
+        $date = ''.$year.'-'.$month.'';
+        $absenBuilder = $this->absenModel;
+        $absenBuilder->select('absen.*');
+        $absenBuilder->select('user_name');
+        $absenBuilder->select('jabatan_nama');
+        $absenBuilder->like('absen_datetime', $date);
+        $absenBuilder->join('user', 'user_nik = absen_nik');
+        $absenBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
+        $absenBuilder->orderBy('absen_datetime', 'DESC');
+        $absen = $absenBuilder->get();
 
         $data = [
-            'absen' => $absen->getResultArray()
+            'absen_arr' => $absen->getResultArray()
         ];
 
         echo view('Admin/Absen/export', $data);
-    }
-
-    public function search() 
-    {
-        $search = $this->request->getVar('search');
-        $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
-        $data = [
-            'title' => 'Karyawan',
-            'absen' => $this->absenModel->join('user', 'user.nik = data_absen.nik')->join('jabatan', 'user.jabatan_id = jabatan.uid')->like('user.name', $search)->orWhere('data_absen.nik', $search)->orderBy('tanggal', 'DESC')->paginate(10, 'absen'),
-            'pager' => $this->absenModel->pager,
-            'currentPage' => $currentPage
-        ];
-
-        // echo '<pre>'; print_r($data['absen']); die;
-
-        echo view('Admin/Absen/search', $data);
     }
 }

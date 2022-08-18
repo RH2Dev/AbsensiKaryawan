@@ -4,12 +4,12 @@
 
 <?php $session = session()->get(); ?>
 <div class="row">
-    <?php foreach($user as $user) : ?>
+    <?php foreach($user_arr as $user) : ?>
     <div class="col-lg-3 mb-3">
         <div class="card bg-dark text-white shadow">
             <div class="card-body">
                 Nama Karyawan
-                <div class="text-white-50 small"><?= $user['name']; ?></div>
+                <div class="text-white-50 small"><?= $user['user_name']; ?></div>
             </div>
         </div>
     </div>
@@ -17,7 +17,7 @@
         <div class="card bg-dark text-white shadow">
             <div class="card-body">
                 NIK Karyawan
-                <div class="text-white-50 small"><?= $user['nik']; ?></div>
+                <div class="text-white-50 small"><?= $user['user_nik']; ?></div>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
         <div class="card bg-dark text-white shadow">
             <div class="card-body">
                 Jenis Kelamin
-                <div class="text-white-50 small"><?= $user['jenis_kelamin']; ?></div>
+                <div class="text-white-50 small"><?= $user['user_jenis_kelamin']; ?></div>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
         <div class="card bg-dark text-white shadow">
             <div class="card-body">
                 Jabatan
-                <div class="text-white-50 small"><?= $user['nama_jabatan']; ?></div>
+                <div class="text-white-50 small"><?= $user['jabatan_nama']; ?></div>
             </div>
         </div>
     </div>
@@ -62,15 +62,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($absen)) { ?>
+                    <?php if (!empty($absen_arr)) { ?>
                     <?php $i = 1 + (10 * ($currentPage - 1)); ?>
-                    <?php foreach($absen as $absen) : ?>
+                    <?php foreach($absen_arr as $absen) : ?>
                     <tr>
                         <td><?= $i++; ?></td>
-                        <td><?= $absen['tanggal']; ?></td>
-                        <td><?= $absen['checkout']; ?></td>
-                        <td><?= $absen['latitude']; ?> <?= $absen['longitude']; ?></td>
-                        <td><?= $absen['latCheckout']; ?> <?= $absen['longCheckout']; ?></td>
+                        <td><?= $absen['absen_datetime']; ?></td>
+                        <td><?= $absen['absen_checkout_datetime']; ?></td>
+                        <td><?= $absen['absen_latitude']; ?> <?= $absen['absen_longitude']; ?></td>
+                        <td><?= $absen['absen_latitude_checkout']; ?> <?= $absen['absen_longitude_checkout']; ?></td>
                         <td>
                             <a href="<?php echo base_url(); ?>/Admin/Absensi/<?= $absen['absen_id']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
                         </td>
@@ -86,7 +86,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <?= $pager->links('user', 'pagination') ?>
+                <?= $pager->links('absen', 'pagination') ?>
             </div>
         </div>
     </div>

@@ -6,7 +6,17 @@ use CodeIgniter\Model;
 
 class AbsenModel extends Model
 {
-    protected $table = "data_absen";
+    protected $table = "absen";
     protected $primaryKey = "absen_id";
-    protected $allowedFields = ['nik', 'photo', 'photoCheckout', 'latitude', 'longitude', 'latCheckout', 'longCheckout', 'tanggal', 'checkout'];
+    protected $allowedFields = [
+        'absen_nik',
+        'absen_photo',
+        'absen_photo_checkout',
+        'absen_latitude',
+        'absen_longitude',
+        'absen_latitude_checkout',
+        'absen_longitude_checkout',
+        'absen_datetime',
+        'absen_checkout_datetime'
+    ];
 }

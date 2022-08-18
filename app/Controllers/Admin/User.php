@@ -23,12 +23,19 @@ class User extends BaseController
     }
 
     // get all users
-    public function user()
+    public function index()
     {
+        $search = $this->request->getVar('search');
+        if (!empty($search)) {
+            $user_arr = $this->userModel->like('user_name', $search)->orWhere('user_nik', $search)->join('jabatan', 'jabatan_id = user_jabatan_id')->orderBy('jabatan_id', 'ASC')->paginate(10, 'user');
+        } else {
+            $user_arr = $this->userModel->join('jabatan', 'jabatan_id = user_jabatan_id')->orderBy('jabatan_id', 'ASC')->paginate(10, 'user');
+        }
         $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
         $data = [
             'title' => 'Karyawan',
-            'user' => $this->userModel->join('jabatan', 'jabatan.uid = user.jabatan_id')->orderBy('jabatan_id', 'ASC')->paginate(10, 'user'),
+            'menu' => 'user',
+            'user_arr' => $user_arr,
             'pager' => $this->userModel->pager,
             'currentPage' => $currentPage
         ];
@@ -38,18 +45,18 @@ class User extends BaseController
 
     public function detail($nik) 
     {
-        $db = \Config\Database::connect();
-        $user = $db->table('user');
-        $user->join('jabatan', 'user.jabatan_id = jabatan.uid');
-        $user->select('user.*');
-        $user->where('nik', $nik);
-        $user->select('jabatan.nama_jabatan');
-        $user = $user->get();
+        $userBuilder = $this->userModel;
+        $userBuilder->select('user.*');
+        $userBuilder->select('jabatan_nama');
+        $userBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
+        $userBuilder->where('user_nik', $nik);
+        $user = $userBuilder->get();
         $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
         $data = [
             'title' => 'Detail Karyawan',
-            'user' => $user->getResultArray(),
-            'absen' => $this->absenModel->where('nik', $nik)->orderBy('tanggal', 'DESC')->paginate(10, 'absen'),
+            'menu' => 'user',
+            'user_arr' => $user->getResultArray(),
+            'absen_arr' => $this->absenModel->where('absen_nik', $nik)->orderBy('absen_datetime', 'DESC')->paginate(10, 'absen'),
             'pager' => $this->absenModel->pager,
             'currentPage' => $currentPage
         ];
@@ -61,7 +68,8 @@ class User extends BaseController
     public function formInsert()
     {
         $data = [
-            'title' => 'Tambah Data Karyawan',
+            'title' => 'Form Tambah Karyawan',
+            'menu' => 'user',
             'validation' => \Config\Services::validation()
         ];
 
@@ -74,18 +82,20 @@ class User extends BaseController
         // Validation
         if(!$this->validate([
             'name' => [
-                'rules' => 'required|alpha_space',
+                'rules' => 'required|alpha_space|max_length[50]',
                 'errors' => [
                     'required' => 'Nama harus diisi gan',
-                    'alpha_space' => 'Nama tidak boleh menggunakan special character'
+                    'alpha_space' => 'Nama tidak boleh menggunakan special character',
+                    'max_length' => 'Ngapain punya nama panjang gan, maksimal 50 karakter'
                 ]
             ],
             'nik' => [
-                'rules' => 'required|is_unique[user.nik]|decimal',
+                'rules' => 'required|is_unique[user.user_nik]|alpha_numeric|exact_length[11]',
                 'errors' => [
                     'required' => 'NIK wajib disi gan',
                     'is_unique' => 'NIK tidak boleh sama',
-                    'decimal' => 'NIK hanya diperbolehkan menggunakan angka'
+                    'alpha_numeric' => 'NIK hanya diperbolehkan menggunakan angka dan huruf',
+                    'exact_length' => 'NIK harus berisi 11 karakter, NO NEGO',
                 ]
             ],
             'jenis_kelamin' => [
@@ -110,11 +120,11 @@ class User extends BaseController
         // insert input to database
         $slug = url_title($this->request->getVar('name'), '-', true);
         $this->userModel->save([
-            'name' => $this->request->getVar('name'),
-            'slug' => $slug,
-            'nik' => $this->request->getVar('nik'),
-            'jenis_kelamin' => $this->request->getVar('jenis_kelamin'),
-            'jabatan_id' => $this->request->getVar('jabatan_id')
+            'user_name' => $this->request->getVar('name'),
+            'user_slug' => $slug,
+            'user_nik' => $this->request->getVar('nik'),
+            'user_jenis_kelamin' => $this->request->getVar('jenis_kelamin'),
+            'user_jabatan_id' => $this->request->getVar('jabatan_id')
         ]);
         
         // redirect to user page
@@ -122,67 +132,98 @@ class User extends BaseController
         return redirect()->to('/Admin/User');
     }
 
-    public function delete($user_id)
+    public function delete($id)
     {
-        $user = $this->userModel->where('user_id', $user_id)->first();
-        $absen = $this->absenModel->where('nik', $user['nik'])->first();
-        $db = \Config\Database::connect();
-        $dataAbsen = $db->table('data_absen');
-        $dataAbsen->select('*');
-        $dataAbsen->where('nik', $user['nik']);
-        $dataAbsen = $dataAbsen->get();
-        $dataAbsen = $dataAbsen->getResultArray();
-        $admin = $this->authModel->where('nik', $user['nik'])->first();
+        $user = $this->userModel->where('user_id', $id)->first();
+        $dataAbsen_arr = $this->absenModel->where('absen_nik', $user['user_nik'])->first();
+        $absenBuilder = $this->absenModel;
+        $absenBuilder->select('*');
+        $absenBuilder->where('absen_nik', $user['user_nik']);
+        $absen = $absenBuilder->get();
+        $absen_arr = $absen->getResultArray();
+        $admin_arr = $this->authModel->where('auth_nik', $user['user_nik'])->first();
 
-        if (!empty($absen)) {
-            $this->absenModel->delete($absen['nik']);
-            foreach ($dataAbsen as $absen) {
-                unlink(FCPATH . 'img/' . $absen['photo']);
-                unlink(FCPATH . 'img/' . $absen['photoCheckout']);
+        if (!empty($dataAbsen_arr)) {
+            foreach ($absen_arr as $absen) {
+                $this->absenModel->delete($absen['absen_nik']);
+            }
+            foreach ($absen_arr as $absen) {
+                if(!empty($absen['absen_photo'])) {
+                    unlink('img/' . $absen['absen_photo']);
+                }
+                if (!empty($absen['absen_photo_checkout'])) {
+                    unlink('img/' . $absen['absen_photo_checkout']);
+                }
             }
         }
-        if (!empty($admin)) {
-            $this->authModel->delete($admin['nik']);
+
+        if (!empty($admin_arr)) {
+            $this->authModel->delete($admin_arr['auth_nik']);
         }
-        $this->userModel->delete($user_id);
+        
+        $this->userModel->delete($id);
         session()->setFlashdata('pesan', 'Data user sudah terhapus');
         return redirect()->to('/Admin/User');
     }
 
-    public function formEdit($slug)
+    public function formEdit($nik)
     {
-        $data = [
-            'title' => 'Edit Data Karyawan',
-            'validation' => \Config\Services::validation(),
-            'user' => $this->userModel->getUser($slug)
-        ];
+        $session = session()->get();
 
-        echo view('Admin/User/formEdit', $data);
+        $user_arr = $this->userModel->where('user_nik', $nik)->first();
+        
+        if ($session['adminStatus'] == 2) {
+            return redirect()->to('/Admin');
+        }
+
+        if (($session['adminStatus'] == $user_arr['user_jabatan_id'] && ($session['adminStatus'] == 1 || $session['adminStatus'] == 3) || $user_arr['user_jabatan_id'] == 4 && ($session['adminStatus'] == 1 || $session['adminStatus'] == 3)) || $session['adminStatus'] == 1) {
+            $data = [
+                'title' => 'Form Edit Data Karyawan',
+                'menu' => 'user',
+                'validation' => \Config\Services::validation(),
+                'user_arr' => $this->userModel->where('user_nik', $nik)->first()
+            ];
+    
+            echo view('Admin/User/formEdit', $data);
+        } else {
+            return redirect()->to('/Admin');
+        }
+
+
     }
 
     public function update($id) 
     {
-        $oldUser = $this->userModel->getUser($this->request->getVar('slug'));
-        if ($oldUser['nik'] == $this->request->getVar('nik')) {
-            $rules_nik = 'required|decimal';
+        $oldUser = $this->userModel->where('user_id', $id)->first();
+        if ($oldUser['user_nik'] == $this->request->getVar('nik')) {
+            $rulesNIK = 'required|alpha_numeric|exact_length[11]';
         } else {
-            $rules_nik = 'required|is_unique[user.nik]|decimal';
+            $rulesNIK = 'required|is_unique[user.user_nik]|alpha_numeric|exact_length[11]';
         }
+
+        $absenBuilder = $this->absenModel;
+        $absenBuilder->select('*');
+        $absenBuilder->where('absen_nik', $oldUser['user_nik']);
+        $absen = $absenBuilder->get();
+        $absen_arr = $absen->getResultArray();
+        $admin_arr = $this->authModel->where('auth_nik', $oldUser['user_nik'])->first();
         // Validation
         if(!$this->validate([
             'name' => [
-                'rules' => 'required|alpha_space',
+                'rules' => 'required|alpha_space|max_length[50]',
                 'errors' => [
                     'required' => 'Nama harus diisi gan',
-                    'alpha_space' => 'Nama tidak boleh menggunakan special character'
+                    'alpha_space' => 'Nama tidak boleh menggunakan special character',
+                    'max_length' => 'Ngapain punya nama panjang gan, maksimal 50 karakter'
                 ]
             ],
             'nik' => [
-                'rules' => $rules_nik,
+                'rules' => $rulesNIK,
                 'errors' => [
                     'required' => 'NIK wajib disi gan',
                     'is_unique' => 'NIK tidak boleh sama',
-                    'decimal' => 'NIK hanya diperbolehkan menggunakan angka'
+                    'alpha_numeric' => 'NIK hanya diperbolehkan menggunakan angka',
+                    'exact_length' => 'NIK harus berisi 11 karakter, NO NEGO',
                 ]
             ],
             'jenis_kelamin' => [
@@ -202,15 +243,29 @@ class User extends BaseController
             return redirect()->back()->withInput()->with('validation', $validation);
         }
 
+        if (!empty($absen_arr)) {
+            foreach ($absen_arr as $absen) {
+                $this->absenModel->save([
+                    'absen_id' => $absen['absen_id'],
+                    'absen_nik' => $this->request->getVar('nik')
+                ]);
+            }
+        }        
+        if (!empty($admin_arr)) {
+            $this->authModel->save([
+                'auth_id' => $admin_arr['auth_id'],
+                'auth_nik' => $this->request->getVar('nik')
+            ]);
+        }
+
         // insert input to database
-        $slug = url_title($this->request->getVar('name'), '-', true);
         $this->userModel->save([
             'user_id' => $id,
-            'name' => $this->request->getVar('name'),
-            'slug' => $slug,
-            'nik' => $this->request->getVar('nik'),
-            'jenis_kelamin' => $this->request->getVar('jenis_kelamin'),
-            'jabatan_id' => $this->request->getVar('jabatan_id')
+            'user_name' => $this->request->getVar('name'),
+            'user_slug' => $oldUser['user_slug'],
+            'user_nik' => $this->request->getVar('nik'),
+            'user_jenis_kelamin' => $this->request->getVar('jenis_kelamin'),
+            'user_jabatan_id' => $this->request->getVar('jabatan_id')
         ]);
 
         
@@ -219,26 +274,20 @@ class User extends BaseController
         return redirect()->to('/Admin/User');
     }
 
-    public function search() 
+    public function export()
     {
-        $search = $this->request->getVar('search');
-        $db = \Config\Database::connect();
-        $user = $db->table('user');
-        $user->join('jabatan', 'user.jabatan_id = jabatan.uid');
-        $user->select('user.*');
-        $user->select('jabatan.*');
-        $user->like('name', $search);
-        $user->orWhere('nik', $search);
-        $user = $user->get();
-        
+        $userBuilder = $this->userModel;
+        $userBuilder->select('user.*');
+        $userBuilder->select('jabatan_nama');
+        $userBuilder->where('user_jabatan_id', 4);
+        $userBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
+        $user = $userBuilder->get();
+
         $data = [
-            'title' => 'Karyawan',
-            'user' => $user->getResultArray()
+            'user_arr' => $user->getResultArray()
         ];
 
-        // echo '<pre>'; print_r($data['user']); die;
-
-        echo view('Admin/User/search', $data);
+        echo view('Admin/User/export', $data);
     }
 }
 ?>

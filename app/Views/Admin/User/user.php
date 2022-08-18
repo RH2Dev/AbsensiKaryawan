@@ -3,6 +3,12 @@
 <?= $this->section('content'); ?>
 <!-- Get Session Data -->
 <?php $session = session()->get(); ?>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Data Karayawan</h1>
+    <a href="<?= base_url(); ?>/Admin/User/export" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+            class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+</div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-1 font-weight-bold text-primary">Data Karyawan</h6>
@@ -22,10 +28,10 @@
                     </span>
                     <span class="text">Tambah Data Karyawan</span>
                 </a>
-                <?php } else {} ?>
+                <?php }?>
             </div>
             <div class="col-lg-4 mb-2">
-                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="<?= base_url(); ?>/Admin/User/search" method="GET">
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="<?= base_url(); ?>/Admin/User">
                     <div class="input-group">
                         <input type="text" class="form-control bg-light border-0 small" placeholder="Cari data Karyawan" aria-label="Search" aria-describedby="basic-addon2" name="search" id="search">
                             <div class="input-group-append">
@@ -50,29 +56,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($user)) { ?>
+                    <?php if (!empty($user_arr)) { ?>
                     <?php $i = 1 + (10 * ($currentPage - 1)); ?>
-                    <?php foreach($user as $user) : ?>
+                    <?php foreach($user_arr as $user) : ?>
                     <tr>
                         <td><?= $i++; ?></td>
-                        <td><?= $user['name']; ?></td>
-                        <td><?= $user['nik']; ?></td>
-                        <td><?= $user['jenis_kelamin']; ?></td>
-                        <td><?= $user['nama_jabatan']; ?></td>
+                        <td><?= $user['user_name']; ?></td>
+                        <td><?= $user['user_nik']; ?></td>
+                        <td><?= $user['user_jenis_kelamin']; ?></td>
+                        <td><?= $user['jabatan_nama']; ?></td>
                         <td>
-                            <a href="<?php echo base_url(); ?>/Admin/User/<?= $user['nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
+                            <a href="<?php echo base_url(); ?>/Admin/User/<?= $user['user_nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
                             <?php if($session['adminStatus'] !== 2) {; ?>   
-                                <?php if ($session['adminStatus'] == $user['jabatan_id'] || $user['jabatan_id'] == 4) {?>
-                                <a href="<?php echo base_url(); ?>/Admin/User/formEdit/<?= $user['slug']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
+                                <?php if (($session['adminStatus'] == $user['user_jabatan_id'] && ($session['adminStatus'] == 1 || $session['adminStatus'] == 3) || $user['user_jabatan_id'] == 4 && ($session['adminStatus'] == 1 || $session['adminStatus'] == 3)) || $session['adminStatus'] == 1) {?>
+                                <a href="<?php echo base_url(); ?>/Admin/User/formEdit/<?= $user['user_nik']; ?>"><button type="button" class="btn btn-warning">Edit</button></a>
                                 <?php } ?>
-                                <?php if(($user['uid'] == 4 || $session['adminStatus'] == 1) && $user['name'] !== $session['adminName']) { ?>
+                                <?php if((($session['adminStatus'] == $user['user_jabatan_id'] && ($session['adminStatus'] == 1 || $session['adminStatus'] == 3) || $user['user_jabatan_id'] == 4 && ($session['adminStatus'] == 1 || $session['adminStatus'] == 3)) && $user['user_name'] !== $session['adminName']) || ($session['adminStatus'] == 1 && $user['user_name'] !== $session['adminName'])) { ?>
                                     <form action="<?php echo base_url(); ?>/Admin/User/<?= $user['user_id']; ?>" method="post" class="d-inline">
                                         <?= csrf_field(); ?>
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah anda yakin?')">Delete</button>
                                     </form>
-                                <?php } else {} ?>
-                            <?php } else {} ?>
+                                <?php }?>
+                            <?php }?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
