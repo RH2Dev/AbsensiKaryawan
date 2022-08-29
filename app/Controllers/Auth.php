@@ -67,9 +67,11 @@ class Auth extends BaseController
         $authBuilder->select('auth_id');
         $authBuilder->select('jabatan_id');
         $authBuilder->select('user_name');
+        $authBuilder->select('kantor_id');
         $authBuilder->where('auth_username', $this->request->getVar('username'));
         $authBuilder->join('user', 'auth_nik = user_nik');
         $authBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
+        $authBuilder->join('kantor', 'user_kantor_id = kantor_id');
         $auth = $authBuilder->get();
         $auth_arr = $auth->getResultArray();
 
@@ -78,7 +80,8 @@ class Auth extends BaseController
             $dataSession = [
                 'adminId' => $admin['auth_id'],
                 'adminStatus' => $admin['jabatan_id'],
-                'adminName' => $admin['user_name']
+                'adminName' => $admin['user_name'],
+                'adminKantor' => $admin['kantor_id']
             ];
         }
         session()->set($dataSession);
@@ -124,10 +127,11 @@ class Auth extends BaseController
                 ]
             ],
             'password' => [
-                'rules' => 'required|max_length[25]',
+                'rules' => 'required|min_length[8]|max_length[30]',
                 'errors' => [
                     'required' => 'Passwordnya manaa....',
-                    'max_length' => 'Password tidak boleh melebihi 25 karakter'
+                    'min_length' => 'Minimal password 8 karakter',
+                    'max_length' => 'Maximal password 30 karakter'
                 ]
             ],
             'confirmPwd' => [

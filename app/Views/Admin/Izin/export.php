@@ -51,13 +51,13 @@
         <?php $i = 1 ?>
         <?php foreach($izin_arr as $izin) : ?>
 		<tr>
-			<td><?= $i++; ?></td>
-			<td><?= $izin['user_name']; ?></td>
-			<td><?= $izin['izin_nik']; ?></td>
-			<td><?= $izin['izin_date']; ?></td>
-			<td><?= $izin['izin_hari']; ?></td>
-			<td><?= $izin['izin_syarat']; ?></td>
-			<td><?= $izin['status_izin_keterangan']; ?></td>
+			<td><?php echo $i++; ?></td>
+			<td><?php echo $izin['user_name']; ?></td>
+			<td><?php echo $izin['izin_nik']; ?></td>
+			<td><?php echo $izin['izin_date']; ?></td>
+			<td><?php echo $izin['izin_hari']; ?></td>
+			<td><?php echo $izin['izin_syarat']; ?></td>
+			<td><?php echo $izin['status_izin_keterangan']; ?></td>
 		</tr>
         <?php endforeach; ?>
 	</table>

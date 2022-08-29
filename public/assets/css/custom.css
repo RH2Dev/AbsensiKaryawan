@@ -30,7 +30,7 @@
   justify-content: center;
   align-items: center;
   width: 350px;
-  height: 180px;
+  height: 225px;
   position: absolute;
   background-color: rgba(51, 51, 51, 0.4);
   border-radius: 10px;
@@ -50,8 +50,8 @@
   justify-content: center;
   align-items: center;
   width: 90%;
-  margin: 10px auto;
   position: relative;
+  margin: 10px auto;
 }
 
 video {
@@ -131,4 +131,4 @@ video {
 }
 .controls > button:hover svg {
   color: white;
-} /*# sourceMappingURL=custom.css.map */
+}

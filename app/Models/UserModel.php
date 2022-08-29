@@ -16,7 +16,8 @@ class UserModel extends Model
         'user_slug',
         'user_nik',
         'user_jenis_kelamin',
-        'user_jabatan_id'
+        'user_jabatan_id',
+        'user_kantor_id'
     ];
 
     public function getUserByNIK($nik = false)

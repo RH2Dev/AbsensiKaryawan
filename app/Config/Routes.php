@@ -57,8 +57,6 @@ $routes->get('/Admin/PreviewPdf', 'Admin\Admin::previewPdf');
 // ROUTING CRUD DATA ADMIN
 // route get all admin data
 $routes->get('/Admin/Admin', 'Admin\Admin::admin');
-// route search data admin
-$routes->get('/Admin/Admin/search', 'Admin\Admin::search');
 // route form & insert admin data
 $routes->get('/Admin/Admin/formInsert', 'Admin\Admin::formInsert');
 $routes->post('/Admin/Admin/Insert', 'Admin\Admin::insert');
@@ -73,16 +71,17 @@ $routes->delete('/Admin/Admin/(:num)', 'Admin\Admin::delete/$1');
 $routes->get('/Admin/User', 'Admin\User::index');
 // route delete single user data 
 $routes->delete('/Admin/User/(:num)', 'Admin\User::delete/$1');
-// route search data user
-$routes->get('/Admin/User/search', 'Admin\User::search');
 // route form & insert user data 
 $routes->get('/Admin/User/formInsert', 'Admin\User::formInsert');
 $routes->post('/Admin/User/insert', 'Admin\User::insert');
 // route form & update user data 
-$routes->get('/Admin/User/formEdit/(:segment)', 'Admin\User::formEdit/$1');
+$routes->get('/Admin/User/formEdit/(:alphanum)', 'Admin\User::formEdit/$1');
 $routes->post('/Admin/User/update/(:num)', 'Admin\User::update/$1');
+// route export user data
+$routes->get('/Admin/User/export', 'Admin\User::export');
 // route get single user 
-$routes->get('/Admin/User/(:num)', 'Admin\User::detail/$1');
+$routes->get('/Admin/User/(:alphanum)', 'Admin\User::detail/$1');
+$routes->get('/Admin/User/(:alphanum)/exportDetail', 'Admin\User::exportDetail/$1');
 
 // ROUTING ABSEN
 // route get all absen data 
@@ -108,10 +107,20 @@ $routes->delete('/Admin/Izin/(:num)', 'Admin\Izin::delete/$1');
 // route form & update izin data 
 $routes->get('/Admin/Izin/formEdit/(:segment)', 'Admin\Izin::formEdit/$1');
 $routes->post('/Admin/Izin/update/(:num)', 'Admin\Izin::update/$1');
-// route search izin data
-$routes->get('/Admin/Izin/search', 'Admin\Izin::search');
 // route get single izin data 
 $routes->get('/Admin/Izin/(:num)', 'Admin\Izin::detail/$1');
+
+// Routing Kantor
+// route get all data izin
+$routes->get('/Admin/Kantor', 'Admin\Kantor::index');
+// route get insert & form izin 
+$routes->get('/Admin/Kantor/formInsert', 'Admin\kantor::formInsert');
+$routes->post('/Admin/Kantor/insert', 'Admin\Kantor::insert');
+// route delete single izin data
+$routes->delete('/Admin/Kantor/(:num)', 'Admin\Kantor::delete/$1');
+// route form & update izin data 
+$routes->get('/Admin/Kantor/formUpdate/(:segment)', 'Admin\Kantor::formUpdate/$1');
+$routes->post('/Admin/Kantor/update/(:num)', 'Admin\Kantor::update/$1');
 
 
 /*

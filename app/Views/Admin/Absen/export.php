@@ -51,13 +51,13 @@
         <?php $i = 1 ?>
         <?php foreach($absen_arr as $absen) : ?>
 		<tr>
-			<td><?= $i++; ?></td>
-			<td><?= $absen['user_name']; ?></td>
-			<td><?= $absen['absen_nik']; ?></td>
-			<td><?= $absen['absen_latitude']; ?> <?= $absen['absen_longitude']; ?></td>
-			<td><?= $absen['absen_latitude_checkout']; ?> <?= $absen['absen_longitude_checkout']; ?></td>
-            <td><?= $absen['absen_datetime']; ?></td>
-            <td><?= $absen['absen_checkout_datetime']; ?></td>
+			<td><?php echo $i++; ?></td>
+			<td><?php echo $absen['user_name']; ?></td>
+			<td><?php echo $absen['absen_nik']; ?></td>
+			<td><?php echo $absen['absen_latitude']; ?> <?php echo $absen['absen_longitude']; ?></td>
+			<td><?php echo $absen['absen_latitude_checkout']; ?> <?php echo $absen['absen_longitude_checkout']; ?></td>
+            <td><?php echo $absen['absen_datetime']; ?></td>
+            <td><?php echo $absen['absen_checkout_datetime']; ?></td>
 		</tr>
         <?php endforeach; ?>
 	</table>

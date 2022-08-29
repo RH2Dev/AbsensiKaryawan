@@ -4,19 +4,25 @@ namespace App\Controllers;
 
 use App\Models\AbsenModel;
 use App\Models\UserModel;
+use App\Models\KantorModel;
 
 class Home extends BaseController
 {
     protected $absenModel;
     protected $userModel;
+    protected $kantorModel;
+    
     public function __construct()
     {
         $this->absenModel = new AbsenModel();
         $this->userModel = new UserModel();
+        $this->kantorModel = new KantorModel();
     }
+
     public function index()
     {
         $data = [
+            'title' => 'Karyawan',
             'validation' => \Config\Services::validation()
         ];
         return view('index', $data);
@@ -24,10 +30,37 @@ class Home extends BaseController
 
     public function insert()
     {
-   
         $todayDate = date('Y-m-d');
         // NIK Validation
         $nik = $this->userModel->getUserByNIK($this->request->getVar('nik'));
+        $kantor_arr = $this->kantorModel->where('kantor_id', $nik['user_kantor_id'])->first();
+
+        // Calculate Radius
+        $latKantor = $kantor_arr['kantor_latitude'] ; 
+        $longKantor = $kantor_arr['kantor_longitude']; 
+        $latUser = $this->request->getVar('latitude'); 
+        $longUser = $this->request->getVar('longitude');  
+        
+        //Converting to radians
+        $longi1 = deg2rad($longKantor); 
+        $longi2 = deg2rad($longUser); 
+        $lati1 = deg2rad($latKantor); 
+        $lati2 = deg2rad($latUser); 
+                
+        //Haversine Formula 
+        $difflong = $longi2 - $longi1; 
+        $difflat = $lati2 - $lati1; 
+                
+        $val = pow(sin($difflat/2),2)+cos($lati1)*cos($lati2)*pow(sin($difflong/2),2); 
+                
+        $radius = 6378.8 * (2 * asin(sqrt($val))) * 1000; //for meters
+        $max = $kantor_arr['kantor_radius'];
+
+        if ($radius >= $max) {
+            session()->setFlashdata('pesan', 'Anda Tidak Dalam Radius Absen '.$kantor_arr['kantor_name'].'');
+            return redirect()->back();
+        }
+
         // Ambil data absen user hari ini
         $absenBuilder = $this->absenModel;
         $absenBuilder->like('absen_datetime', $todayDate);
@@ -35,7 +68,7 @@ class Home extends BaseController
         $absen = $absenBuilder->get();
         $absen_arr = $absen->getResultArray();
 
-        if ($nik['user_jabatan_id'] !== 4) {
+        if ($nik['user_jabatan_id'] != 4) {
             session()->setFlashdata('pesan', 'Hanya karyawan yang perlu absen');
             return redirect()->back();
         }

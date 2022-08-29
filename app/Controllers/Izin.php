@@ -85,6 +85,11 @@ class Izin extends BaseController
             return redirect()->back()->withInput()->with('validation', $validation);
         }
 
+        $statusIzinBuilder = $this->statusIzinModel;
+        $statusIzinBuilder->select('*');
+        $statusIzin = $statusIzinBuilder->get();
+        $statusIzin_arr = $statusIzin->getResultArray();
+
         $this->izinModel->save([
             'izin_nik' => $this->request->getVar('nik'),
             'izin_date' => $this->request->getVar('date'),
@@ -93,7 +98,23 @@ class Izin extends BaseController
             'izin_hari' => $this->request->getVar('hari')
         ]);
 
-        session()->setFlashdata('pesan', 'Data izin sudah berhasil ditambahkan');
-        return redirect()->to('/Izin');
+        // Get Last Insert Data
+        $insertId = $this->izinModel->insertID();
+        $lastBuilder = $this->izinModel;
+        $lastBuilder->select('izin.*');
+        $lastBuilder->select('user.user_name');
+        $lastBuilder->where('izin_id', $insertId);
+        $lastBuilder->join('user', 'izin_nik = user_nik');
+        $lastBuilder = $lastBuilder->get();
+        $lastInsert = $lastBuilder->getResultArray();
+
+        $data = [
+            'title' => 'Formulir Izin',
+            'statusIzin' => $statusIzin_arr,
+            'lastInsert' => $lastInsert
+        ];
+
+        session()->setFlashdata('pesan', 'Berhasil input data izin, silahkan print halaman ini');
+        echo view('formPreview', $data);
     }
 }

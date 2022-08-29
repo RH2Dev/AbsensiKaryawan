@@ -49,11 +49,11 @@
         <?php $i = 1 ?>
         <?php foreach($user_arr as $user) : ?>
 		<tr>
-			<td><?= $i++; ?></td>
-			<td><?= $user['user_name']; ?></td>
-			<td><?= $user['user_nik']; ?></td>
-			<td><?= $user['user_jenis_kelamin']; ?></td>
-			<td><?= $user['jabatan_nama']; ?></td>
+			<td><?php echo $i++; ?></td>
+			<td><?php echo $user['user_name']; ?></td>
+			<td><?php echo $user['user_nik']; ?></td>
+			<td><?php echo $user['user_jenis_kelamin']; ?></td>
+			<td><?php echo $user['jabatan_nama']; ?></td>
 		</tr>
         <?php endforeach; ?>
 	</table>

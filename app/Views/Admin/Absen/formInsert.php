@@ -1,25 +1,25 @@
-<?= $this->extend('Admin/layout/template'); ?>
+<?php echo $this->extend('Admin/layout/template'); ?>
 
-<?= $this->section('content'); ?>
+<?php echo $this->section('content'); ?>
 
 <div class="p-1">
     <div class="text-center">
         <h1 class="h4 text-gray-900 mb-2">Tambah Data Absen</h1>
     </div>
 
-    <form id="absen" action="<?= base_url(); ?>/Admin/Absensi/insert" method="POST">
-        <?= csrf_field(); ?>
-        <input id="latitude" type="hidden" name="latitude" value="<?= old('latitude'); ?>">
-        <input id="longitude" type="hidden" name="longitude" value="<?= old('longitude'); ?>">
-        <input class="data-photo" type="hidden" name="photo" value="<?= old('photo'); ?>">
+    <form id="absen" action="<?php echo base_url(); ?>/Admin/Absensi/insert" method="POST">
+        <?php echo csrf_field(); ?>
+        <input id="latitude" type="hidden" name="latitude" value="<?php echo old('latitude'); ?>">
+        <input id="longitude" type="hidden" name="longitude" value="<?php echo old('longitude'); ?>">
+        <input class="data-photo" type="hidden" name="photo" value="<?php echo old('photo'); ?>">
         <div class="display-cover">
             <video autoplay></video>
             <canvas class="d-none"></canvas>
 
             <div class="form-input">
                 <h3 class="title">ABSENSI KARYAWAN</h3>
-                <p class="error-message"><?= (session()->getFlashData('pesan') ? session()->getFlashdata('pesan'): ''); ?></p>
-                <input type="text" class="form-control" id="nik" name="nik" value="<?= old('nik'); ?>" placeholder="Masukkan NIK anda">
+                <p class="error-message"><?php echo (session()->getFlashData('pesan') ? session()->getFlashdata('pesan'): ''); ?></p>
+                <input type="text" class="form-control" id="nik" name="nik" value="<?php echo old('nik'); ?>" placeholder="Masukkan NIK anda">
                 <button class="btn btn-primary" type="button" onclick="absen()"> Submit </button>
             </div>
 
@@ -43,4 +43,4 @@
             $('#screenshot').click();
         }
     </script>
-<?= $this->endSection(); ?>
+<?php echo $this->endSection(); ?>

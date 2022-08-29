@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Absensi</title>
+    <title>Absensi <?php echo $title ?></title>
 
     <!-- Custom fonts for this template-->
     <link type='text/css' rel='stylesheet' href="<?php echo base_url(); ?>/assets/vendor/fontawesome-free/css/all.min.css" media='all'>
@@ -21,6 +21,7 @@
     <link type='text/css' rel='stylesheet' href="<?php echo base_url(); ?>/assets/css/dateStyle.css" media='all'>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
     <script src="<?php echo base_url(); ?>/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
     <!-- Custom styles for this template-->
     <link href="<?php echo base_url(); ?>/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -32,7 +33,7 @@
     <div id="wrapper">
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Render Section  -->
-            <?= $this->renderSection('content'); ?>
+            <?php echo $this->renderSection('content'); ?>
         </div> 
     </div>
     <!-- Bootstrap core JavaScript-->
@@ -41,6 +42,9 @@
 
     <!-- Core plugin JavaScript-->
     <script src="<?php echo base_url(); ?>/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="<?php echo base_url(); ?>/assets/js/printThis.js"></script>
+    <script src="<?php echo base_url(); ?>/assets/js/printPdf.js"></script>
 
 
 </body>

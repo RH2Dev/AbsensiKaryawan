@@ -6,40 +6,70 @@ use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\IzinModel;
 use App\Models\StatusIzinModel;
+use App\Models\KantorModel;
 
 class Izin extends BaseController
 {
     protected $userModel;
     protected $izinModel;
     protected $statusIzinModel;
+    protected $kantorModel;
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->izinModel = new IzinModel();
         $this->statusIzinModel = new StatusIzinModel();
+        $this->kantorModel = new KantorModel();
     }
 
     public function index()
     {
-        
+        $session = session()->get();
         $search = $this->request->getVar('search');
+        $kantor = $this->request->getVar('kantor');
+        $year = $this->request->getVar('year');
+        $month = $this->request->getVar('month');
+        $date = ''.$year.'-'.$month.'';
         $izinYearBuilder = $this->izinModel;
         $izinYearBuilder->distinct();
         $izinYearBuilder->select('Year(izin_date)');
         $izinYear = $izinYearBuilder->get();
         $izinYear = $izinYear->getResultArray();
 
-        if (!empty($search)) {
-            $izin_arr = $this->izinModel->like('user_name', $search)->orWhere('izin_nik', $search)->select('izin.*')->select('status_izin_keterangan')->select('user_name')->join('status_izin', 'izin_status_id = status_izin_id')->join('user', 'user_nik = izin_nik')->paginate(10, 'izin');
+        $izinBuilder = $this->izinModel;
+        $izinBuilder->select('izin.*');
+        $izinBuilder->select('status_izin_keterangan');
+        $izinBuilder->select('user_name');
+        $izinBuilder->join('status_izin', 'izin_status_id = status_izin_id');
+        $izinBuilder->join('user', 'user_nik = izin_nik');
+        if ($session['adminStatus'] == 1) {
+            if (!empty($kantor)) {
+                $izinBuilder->where('user_kantor_id', $kantor);
+            }
         } else {
-            $izin_arr = $this->izinModel->select('izin.*')->select('status_izin_keterangan')->select('user_name')->join('status_izin', 'izin_status_id = status_izin_id')->join('user', 'user_nik = izin_nik')->paginate(10, 'izin');
+            $izinBuilder->where('user_kantor_id', $session['adminKantor']);
         }
+        if (!empty($search)) {
+            $izinBuilder->like('user_name', $search);
+        }
+        if (!empty($year)) {
+            $izinBuilder->like('izin_date', $date);
+        }
+        $izinBuilder->orderBy('izin_date', 'DESC');
+        $izin_arr = $izinBuilder->paginate(10, 'izin');
+
         $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
+        $kantor_arr = $this->kantorModel->findAll();
         $data = [
             'title' => 'Izin',
             'menu' => 'izin',
             'izinYear' => $izinYear,
             'izin_arr' => $izin_arr,
+            'kantor_arr' => $kantor_arr,
+            'kantorInput' => $kantor,
+            'searchInput' => $search,
+            'yearInput' => $year,
+            'monthInput' => $month,
             'pager' => $this->izinModel->pager,
             'currentPage' => $currentPage
         ];
@@ -205,18 +235,29 @@ class Izin extends BaseController
 
     public function export()
     {
+        $session = session()->get();
         $year = $this->request->getVar('year');
         $month = $this->request->getVar('month');
+        $kantor = $this->request->getVar('kantor');
         $date = ''.$year.'-'.$month.'';
         $izinBuilder = $this->izinModel;
         $izinBuilder->select('izin.*');
         $izinBuilder->select('jabatan_nama');
         $izinBuilder->select('user_name');
+        $izinBuilder->select('kantor_name');
         $izinBuilder->like('izin_date', $date);
+        if ($session['adminStatus'] == 1) {
+            if (!empty($kantor)) {
+                $izinBuilder->where('user_kantor_id', $kantor);
+            }
+        } else {
+            $izinBuilder->where('user_kantor_id', $session['adminKantor']);
+        }
         $izinBuilder->select('status_izin_keterangan');
         $izinBuilder->join('user', 'user_nik = izin_nik');
         $izinBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
         $izinBuilder->join('status_izin', 'izin_status_id = status_izin_id');
+        $izinBuilder->join('kantor', 'kantor_id = user_kantor_id');
         $izin = $izinBuilder->get();
 
         $data = [

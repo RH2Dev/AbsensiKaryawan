@@ -1,20 +1,49 @@
-<?= $this->extend('Admin/layout/template'); ?>
+<?php echo $this->extend('Admin/layout/template'); ?>
 
-<?= $this->section('content'); ?>
+<?php echo $this->section('content'); ?>
 <?php $session = session()->get(); ?>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <a href="<?= base_url(); ?>/Admin/PreviewPdf" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">View PDF</a>
+    <div class="d-flex">
+    <?php if ($session['adminStatus'] == 1) {?>
+    <form class="mr-2" action="<?php echo current_url(); ?>" style="display: flex;">
+        <input type="hidden" name="year" value="<?php echo $inputFilterYear ?>">
+
+        <select class="form-select" id="kantor" name="kantor" style="width: 200px;">
+            <option value="" selected disabled>Kantor</option>
+            <?php foreach ($kantor_arr as $kantor) : ?>
+            <option value="<?php echo $kantor['kantor_id'] ?>" <?php echo ($inputFilterKantor == $kantor['kantor_id'] ? 'selected' : ''); ?>><?php echo $kantor['kantor_name'] ?></option>
+            <?php endforeach; ?>
+        </select>
+        <button class="btn btn-primary ml-1" type="submit">
+            <i class="fas fa-search fa-sm"></i> Filter
+        </button>
+    </form>
+    <?php } ?>
+    <button id="printPdf"  class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+            class="fas fa-download fa-sm text-white-50"></i> Generate Report</button>
+    </div>
 </div>
-<div class="row">
-    <div class="col-lg-4 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
+
+<div id="printSection">
+    <div class="mb-4 d-flex justify-content-between">
+        <div class="card border-left-primary shadow h-100 py-2" style="width: 32%;">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
+                        <?php if ($session['adminStatus'] == 1) {?>
+                            <?php if (!empty($inputFilterKantor)) { ?>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Jumlah Karyawan <?php echo $kantorName ?></div>
+                            <?php } else { ?>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Jumlah Karyawan Keseluruhan</div>
+                            <?php } ?>
+                        <?php } else { ?>
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Jumlah Karyawan</div>
+                            Jumlah Karyawan <?php echo $kantorName ?></div>
+                        <?php } ?>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $totalUser ?> Orang</div>
                     </div>
                     <div class="col-auto">
@@ -23,17 +52,25 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-4 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
+        <div class="card border-left-info shadow h-100 py-2" style="width: 32%;">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Absensi Harian
-                        </div>
+                        <?php if ($session['adminStatus'] == 1) {?>
+                            <?php if (!empty($inputFilterKantor)) { ?>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Absensi Harian <?php echo $kantorName ?></div>
+                            <?php } else { ?>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Absensi Harian Keseluruhan</div>
+                            <?php } ?>
+                        <?php } else { ?>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Absensi Harian <?php echo $kantorName ?></div>
+                        <?php } ?>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo $absenPercent ?>%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo number_format((float)$absenPercent, 1, '.', ''); ?>%</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
@@ -50,17 +87,25 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-4 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
+        <div class="card border-left-info shadow h-100 py-2" style="width: 32%;">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Checkout Harian
-                        </div>
+                        <?php if ($session['adminStatus'] == 1) {?>
+                            <?php if (!empty($inputFilterKantor)) { ?>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Checkout Harian <?php echo $kantorName ?></div>
+                            <?php } else { ?>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Checkout Harian Keseluruhan</div>
+                            <?php } ?>
+                        <?php } else { ?>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Checkout Harian <?php echo $kantorName ?></div>
+                        <?php } ?>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo $checkoutPercent ?>%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo number_format((float)$checkoutPercent, 1, '.', ''); ?>%</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
@@ -78,93 +123,108 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="card shadow mb-4">
-    <!-- Card Header - Dropdown -->
-    <div
-        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Absensi Overview</h6>
-        <div class="dropdown no-arrow">
-            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-1"
-                aria-labelledby="dropdownMenuLink">
-                <div class="dropdown-header p-1">Filter Tahun:</div>
-                <?php foreach ($absenYear as $year) : ?>
-                <form action="<?php echo base_url(); ?>/Admin">
-                    <input type="submit" class="form-control" value="<?php echo $year['Year(absen_datetime)'] ?>" placeholder="<?php echo $year['Year(absen_datetime)'] ?>" name="year">
-                </form>
-                <?php endforeach; ?>
+    <!-- Bar Chart -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between">
+            <?php if ($session['adminStatus'] == 1) {?>
+                <?php if (!empty($inputFilterKantor)) { ?>
+                    <h4 class="h4 mb-0 text-primary">Statistik Absensi Tahunan <?php echo $kantorName; ?></h4>
+                <?php } else { ?>
+                    <h4 class="h4 mb-0 text-primary">Statistik Absensi Tahunan Keseluruhan</h4>
+                <?php } ?>
+            <?php } else { ?>
+                <h4 class="h4 mb-0 text-primary">Statistik Absensi Tahunan <?php echo $kantorName; ?></h4>
+            <?php } ?>
+            <form action="<?php echo current_url(); ?>" style="display: flex;">
+                <?php if ($session['adminStatus'] == 1) { ?>
+                    <input type="hidden" name="kantor" id="kantor" value="<?php echo $inputFilterKantor ?>">
+                <?php } ?>
+                <select class="form-select ml-1" id="year" name="year" style="width: 100px;">
+                    <option value="" selected disabled>Tahun</option>
+                    <?php foreach ($absenYear as $year) : ?>
+                    <option value="<?php echo $year['Year(absen_datetime)'] ?>" <?php echo ($year['Year(absen_datetime)'] == $inputFilterYear ? 'selected' : ''); ?>><?php echo $year['Year(absen_datetime)'] ?></option>
+                    <?php endforeach; ?>
+                </select>         
+                <button class="btn btn-primary ml-1" type="submit">
+                    <i class="fas fa-search fa-sm"></i> Filter
+                </button>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="chart-bar">
+                <canvas id="myBarChart"></canvas>
             </div>
         </div>
     </div>
-    <!-- Card Body -->
-    <div class="card-body">
-        <div class="chart-area">
-            <canvas id="myAreaChart"></canvas>
+
+    <!-- Google Map -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row justify-content-between">
+            <h6 class="m-1 font-weight-bold text-primary">Absensi Hari ini <?php echo $kantorName; ?></h6>
+        </div>
+        <div class="card-body">
+            <div id="map" style="width: 100%; height: 500px;"> </div>
         </div>
     </div>
-</div>
 
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-1 font-weight-bold text-primary">Data Karyawan</h6>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
+    <div class="card shadow mb-4">
+        
+        <div class="card-header py-3 d-flex flex-row justify-content-between">
+            
+            <?php if ($session['adminStatus'] == 1) {?>
+                <?php if (!empty($inputFilterKantor)) { ?>
+                    <h6 class="m-1 font-weight-bold text-primary">Karyawan yang Belum Absen Hari Ini <?php echo $kantorName; ?></h6>
+                <?php } else { ?>
+                    <h6 class="m-1 font-weight-bold text-primary">Karyawan yang Belum Absen Hari Ini Keseluruhan</h6>
+                <?php } ?>
+            <?php } else { ?>
+                <h6 class="m-1 font-weight-bold text-primary">Karyawan yang Belum Absen Hari Ini <?php echo $kantorName; ?></h6>
+            <?php } ?>
+            
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <?php if (!empty($user_arr)) { ?>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
                         <th>NIK</th>
                         <th>Jenis Kelamin</th>
-                        <th>Absen</th>
-                        <th>Checkout</th>
+                        <th>Kantor</th>
                         <th>Aksi</th>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($user_arr)) { ?>
-                    <?php $i = 1 + (10 * ($currentPage - 1)); ?>
+                    <?php $i = 1; ?>
                     <?php foreach($user_arr as $user) : ?>
                     <tr>
-                        <td><?= $i++; ?></td>
-                        <td><?= $user['user_name']; ?></td>
-                        <td><?= $user['user_nik']; ?></td>
-                        <td><?= $user['user_jenis_kelamin']; ?></td>
-                        <td><?= $user['absen_label']; ?></td>
-                        <td><?= $user['checkout_label']; ?></td>
+                        <td><?php echo $i++; ?></td>
+                        <td><?php echo $user['user_name']; ?></td>
+                        <td><?php echo $user['user_nik']; ?></td>
+                        <td><?php echo $user['user_jenis_kelamin']; ?></td>
+                        <td><?php echo $user['kantor_name']; ?></td>
                         <td>
-                            <a href="<?php echo base_url(); ?>/Admin/User/<?= $user['user_nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
+                            <a href="<?php echo base_url(); ?>/Admin/User/<?php echo $user['user_nik']; ?>"><button type="button" class="btn btn-warning">Details</button></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
-                    <?php } else { ?>
-                        <div class="alert alert-danger" role="alert">
-                            Tidak Ada data Karyawan
-                        </div>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="row">
-            <div class="col">
-                <?= $pager->links('user', 'pagination') ?>
+                </table>
+                <?php } else { ?>
+                    <div class="alert alert-success" role="alert">
+                        Semua Karyawan Sudah Absen Hari Ini
+                    </div>
+                <?php } ?>
             </div>
         </div>
     </div>
 </div>
-
 <script src="<?php echo base_url(); ?>/assets/chart.js/Chart.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo getenv('API_GMAP'); ?>&callback=initMap&v=weekly" defer></script>
 <script>
+
 // Set new default font family and font color to mimic Bootstrap's default styling
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
-
 function number_format(number, decimals, dec_point, thousands_sep) {
   // *     example: number_format(1234.56, 2, ',', ' ');
   // *     return: '1 234,56'
@@ -190,27 +250,27 @@ function number_format(number, decimals, dec_point, thousands_sep) {
   return s.join(dec);
 }
 
-// Area Chart Example
-var ctx = document.getElementById("myAreaChart");
-var myLineChart = new Chart(ctx, {
-  type: 'line',
+// Bar Chart Example
+var ctx = document.getElementById("myBarChart");
+var myBarChart = new Chart(ctx, {
+  type: 'bar',
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [{
       label: "Absensi",
-      lineTension: 0.3,
-      backgroundColor: "rgba(78, 115, 223, 0.05)",
-      borderColor: "rgba(78, 115, 223, 1)",
-      pointRadius: 3,
-      pointBackgroundColor: "rgba(78, 115, 223, 1)",
-      pointBorderColor: "rgba(78, 115, 223, 1)",
-      pointHoverRadius: 3,
-      pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-      pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-      pointHitRadius: 10,
-      pointBorderWidth: 2,
+      backgroundColor: "#27d600",
+      hoverBackgroundColor: "#1ea600",
+      borderColor: "#27d600",
       data: [<?php echo $absenJan ?>, <?php echo $absenFeb ?>, <?php echo $absenMar ?>, <?php echo $absenApr ?>, <?php echo $absenMei ?>, <?php echo $absenJun ?>, <?php echo $absenJul ?>, <?php echo $absenAgu ?>, <?php echo $absenSep ?>, <?php echo $absenOkt ?>, <?php echo $absenNov ?>, <?php echo $absenDes ?>],
-    }],
+    },
+    {
+      label: "Belum Absen",
+      backgroundColor: "#eb1700",
+      hoverBackgroundColor: "#ab0b00",
+      borderColor: "#eb1700",
+      data: [<?php echo $offJan ?>, <?php echo $offFeb ?>, <?php echo $offMar ?>, <?php echo $offApr ?>, <?php echo $offMei ?>, <?php echo $offJun ?>, <?php echo $offJul ?>, <?php echo $offAgu ?>, <?php echo $offSep ?>, <?php echo $offOkt ?>, <?php echo $offNov ?>, <?php echo $offDes ?>],
+    }
+],
   },
   options: {
     maintainAspectRatio: false,
@@ -225,23 +285,25 @@ var myLineChart = new Chart(ctx, {
     scales: {
       xAxes: [{
         time: {
-          unit: 'date'
+          unit: 'month'
         },
         gridLines: {
           display: false,
           drawBorder: false
         },
         ticks: {
-          maxTicksLimit: 7
-        }
+          maxTicksLimit: 6
+        },
+        maxBarThickness: 25,
       }],
       yAxes: [{
         ticks: {
+          min: 0,
           maxTicksLimit: 5,
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return number_format(value)  + '%';
+            return + number_format(value) + '%';
           }
         },
         gridLines: {
@@ -257,18 +319,16 @@ var myLineChart = new Chart(ctx, {
       display: false
     },
     tooltips: {
-      backgroundColor: "rgb(255,255,255)",
-      bodyFontColor: "#858796",
       titleMarginBottom: 10,
       titleFontColor: '#6e707e',
       titleFontSize: 14,
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
       borderColor: '#dddfeb',
       borderWidth: 1,
       xPadding: 15,
       yPadding: 15,
       displayColors: false,
-      intersect: false,
-      mode: 'index',
       caretPadding: 10,
       callbacks: {
         label: function(tooltipItem, chart) {
@@ -276,9 +336,40 @@ var myLineChart = new Chart(ctx, {
           return datasetLabel + ': ' + number_format(tooltipItem.yLabel) + ' %';
         }
       }
-    }
+    },
   }
 });
-
 </script>
-<?= $this->endSection(); ?>
+
+<script>
+    // Initialize and add the map
+    function initMap() {
+        const kantor = { lat: <?php echo $kantor_map['kantor_latitude'] ?>, lng: <?php echo $kantor_map['kantor_longitude'] ?> };
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 19,
+            center: kantor,
+        });
+        // Draw Circle
+        const cityCircle = new google.maps.Circle({
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#FF0000",
+        fillOpacity: 0.35,
+        map,
+        center: kantor,
+        radius: <?php echo $kantor_map['kantor_radius'] ?>,
+        });
+        // The marker, positioned at absen
+        <?php if (!empty($absen_arr)) { ?>
+        <?php foreach($absen_arr as $absen) : ?>
+        const absen<?php echo $absen['absen_id'] ?> = new google.maps.Marker({
+            position: {lat: <?php echo $absen['absen_latitude'] ?>, lng: <?php echo $absen['absen_longitude'] ?>},
+            map: map,
+        });
+        <?php endforeach ?>
+        <?php } ?>
+    }
+    window.initMap = initMap;
+</script>
+<?php echo $this->endSection(); ?>

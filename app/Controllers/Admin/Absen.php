@@ -5,39 +5,72 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\AbsenModel;
+use App\Models\KantorModel;
 
 class Absen extends BaseController
 {
     protected $userModel;
+    protected $absenModel;
+    protected $kantorModel;
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->absenModel = new AbsenModel();
+        $this->kantorModel = new KantorModel();
     }
 
     public function index()
-    {
+    {   
+        $session = session()->get();
+        $currentURL = current_url();
+        $params   = $_SERVER['QUERY_STRING'];
+        $fullURL = $currentURL . '?' . $params;
+
         $search = $this->request->getVar('search');
+        $year = $this->request->getVar('year');
+        $month = $this->request->getVar('month');
+        $kantor = $this->request->getVar('kantor');
+        $date = ''.$year.'-'.$month.'';
         $absenYearBuilder = $this->absenModel;
         $absenYearBuilder->distinct();
         $absenYearBuilder->select('Year(absen_datetime)');
         $absenYear = $absenYearBuilder->get();
         $absenYear = $absenYear->getResultArray();
 
+        $absenBuilder = $this->absenModel;
+        $absenBuilder->join('user', 'user_nik = absen_nik');
         if (!empty($search)) {
-            $absen_arr = $this->absenModel->like('user_name', $search)->orLike('absen_datetime', $search)->orWhere('absen_nik', $search)->join('user', 'user_nik = absen_nik')->orderBy('absen_datetime', 'DESC')->paginate(10, 'absen');
-        } else {
-            $absen_arr = $this->absenModel->join('user', 'user_nik = absen_nik')->orderBy('absen_datetime', 'DESC')->paginate(10, 'absen');
+            $absenBuilder->like('user_name', $search);
         }
+        if (!empty($year)) {
+            $absenBuilder->like('absen_datetime', $date);
+        }
+        if ($session['adminStatus'] == 1) {
+            if (!empty($kantor)) {
+                $absenBuilder->where('user_kantor_id', $kantor);
+            }
+        } else {
+            $absenBuilder->where('user_kantor_id', $session['adminKantor']);
+        }
+        $absenBuilder->orderBy('absen_datetime', 'DESC');
+        $absen_arr = $absenBuilder->paginate(10, 'absen');
 
-        $currentPage = $this->request->getVar('page_user') ? $this->request->getVar('page_user') : 1;
+        $currentPage = $this->request->getVar('page_absen') ? $this->request->getVar('page_absen') : 1;
+        $kantor_arr = $this->kantorModel->findAll();
         $data = [
             'title' => 'Absensi',
             'menu' => 'absensi',
             'absenYear' => $absenYear,
             'absen_arr' => $absen_arr,
+            'kantor_arr' => $kantor_arr,
+            'kantorInput' => $kantor,
+            'yearInput' => $year,
+            'searchInput' => $search,
             'pager' => $this->absenModel->pager,
-            'currentPage' => $currentPage
+            'currentPage' => $currentPage,
+            'fullURL' => $fullURL,
+            'year' => $year,
+            'month' => $month,
         ];
 
         echo view('Admin/Absen/absen', $data);
@@ -51,9 +84,11 @@ class Absen extends BaseController
         $absen_builder->select('absen.*');
         $absen_builder->select('user.*');
         $absen_builder->select('jabatan.jabatan_nama');
+        $absen_builder->select('kantor.*');
+        $absen_builder->where('absen_id', $id);
         $absen_builder->join('user', 'user_nik = absen_nik');
         $absen_builder->join('jabatan', 'user_jabatan_id = jabatan_id');
-        $absen_builder->where('absen_id', $id);
+        $absen_builder->join('kantor', 'user_kantor_id = kantor_id');
         $absen = $absen_builder->get();
         $data = [
             'title' => 'Absensi',
@@ -67,7 +102,6 @@ class Absen extends BaseController
 
     public function formInsert()
     {
-        
         $data = [
             'title' => 'Form Insert Absen',
             'menu' => 'absensi',
@@ -83,6 +117,34 @@ class Absen extends BaseController
         $todayDate = date('Y-m-d');
         // NIK Validation
         $nik = $this->userModel->getUserByNIK($this->request->getVar('nik'));
+        $kantor_arr = $this->kantorModel->where('kantor_id', $nik['user_kantor_id'])->first();
+        
+        // Calculate Radius
+        $latKantor = $kantor_arr['kantor_latitude'] ; 
+        $longKantor = $kantor_arr['kantor_longitude']; 
+        $latUser = $this->request->getVar('latitude'); 
+        $longUser = $this->request->getVar('longitude');  
+        
+        //Converting to radians
+        $longi1 = deg2rad($longKantor); 
+        $longi2 = deg2rad($longUser); 
+        $lati1 = deg2rad($latKantor); 
+        $lati2 = deg2rad($latUser); 
+                
+        //Haversine Formula 
+        $difflong = $longi2 - $longi1; 
+        $difflat = $lati2 - $lati1; 
+                
+        $val = pow(sin($difflat/2),2)+cos($lati1)*cos($lati2)*pow(sin($difflong/2),2); 
+                
+        $radius = 6378.8 * (2 * asin(sqrt($val))) * 1000; //for meters
+        $max = $kantor_arr['kantor_radius'];
+
+        if ($radius >= $max) {
+            session()->setFlashdata('pesan', 'Anda Tidak Dalam Radius Absen '.$kantor_arr['kantor_name'].'');
+            return redirect()->back();
+        }
+
         // Ambil data absen user hari ini
         $absenBuilder = $this->absenModel;
         $absenBuilder->like('absen_datetime', $todayDate);
@@ -153,14 +215,23 @@ class Absen extends BaseController
 
     public function export()
     {
+        $session = session()->get();
         $year = $this->request->getVar('year');
         $month = $this->request->getVar('month');
+        $kantor = $this->request->getVar('kantor');
         $date = ''.$year.'-'.$month.'';
         $absenBuilder = $this->absenModel;
         $absenBuilder->select('absen.*');
         $absenBuilder->select('user_name');
         $absenBuilder->select('jabatan_nama');
         $absenBuilder->like('absen_datetime', $date);
+        if ($session['adminStatus'] == 1) {
+            if (!empty($kantor)) {
+                $absenBuilder->where('user_kantor_id', $kantor);
+            }
+        } else {
+            $absenBuilder->where('user_kantor_id', $session['adminKantor']);
+        }
         $absenBuilder->join('user', 'user_nik = absen_nik');
         $absenBuilder->join('jabatan', 'user_jabatan_id = jabatan_id');
         $absenBuilder->orderBy('absen_datetime', 'DESC');

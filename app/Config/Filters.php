@@ -84,10 +84,12 @@ class Filters extends BaseConfig
                 'Admin/Absen',
                 'Admin/Admin',
                 'Admin/Izin',
+                'Admin/Kantor',
                 'Admin/User/*',
                 'Admin/Absen/*',
                 'Admin/Admin/*',
-                'Admin/Izin/*'
+                'Admin/Izin/*',
+                'Admin/Kantor/*'
             ]
         ],
         'LogedIn' => ['before' => 
@@ -99,7 +101,9 @@ class Filters extends BaseConfig
         'CEO' => ['before' => 
             [
                 'Admin/Admin',
-                'Admin/Admin/*'
+                'Admin/Admin/*',
+                'Admin/Kantor',
+                'Admin/Kantor/*'
             ]
         ],
         'HRCEO' => ['before' => 

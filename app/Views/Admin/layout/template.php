@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Absensi - <?= $title; ?></title>
+    <title>Absensi - <?php echo $title; ?></title>
 
     <!-- Custom fonts for this template-->
     <link href="<?php echo base_url(); ?>/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -60,16 +60,22 @@
 
             <!-- Nav Item - Tables -->
             <?php $session = session()->get(); ?>
-            <?php if(!empty($session['adminStatus'])) { ?>
-                <?php if($session['adminStatus'] == 1) {; ?>
-                <li class="nav-item <?php echo ($menu == 'admin' ? 'active' : '' );?>">
-                    <a class="nav-link" href="<?php echo base_url(); ?>/Admin/Admin">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Data Akun Admin</span>
-                    </a>
-                </li>
-                <?php } else {} ?>
-            <?php } else {} ?>
+            <?php if($session['adminStatus'] == 1) {; ?>
+            <li class="nav-item <?php echo ($menu == 'admin' ? 'active' : '' );?>">
+                <a class="nav-link" href="<?php echo base_url(); ?>/Admin/Admin">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Data Akun Admin</span>
+                </a>
+            </li>
+            <?php }?>
+            <?php if($session['adminStatus'] == 1) {; ?>
+            <li class="nav-item <?php echo ($menu == 'kantor' ? 'active' : '' );?>">
+            <a class="nav-link" href="<?php echo base_url(); ?>/Admin/Kantor">
+                <i class="fas fa-fw fa-table"></i>
+                <span>Data Kantor</span>
+            </a>
+            </li>
+            <?php }?>
             <li class="nav-item <?php echo ($menu == 'user' ? 'active' : '' );?>">
                 <a class="nav-link" href="<?php echo base_url(); ?>/Admin/User">
                     <i class="fas fa-fw fa-table"></i>
@@ -119,7 +125,7 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= session()->get('adminName'); ?></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo session()->get('adminName'); ?></span>
                                 <img class="img-profile rounded-circle" src="<?php echo base_url(); ?>/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
@@ -137,7 +143,7 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <?= $this->renderSection('content'); ?>
+                    <?php echo $this->renderSection('content'); ?>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -179,7 +185,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="<?= base_url(); ?>/Admin/Logout">Logout</a>
+                    <a class="btn btn-primary" href="<?php echo base_url(); ?>/Admin/Logout">Logout</a>
                 </div>
             </div>
         </div>

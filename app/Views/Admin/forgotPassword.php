@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Absensi - <?= $title; ?></title>
+    <title>Absensi - <?php echo $title; ?></title>
 
     <!-- Custom fonts for this template-->
     <link href="<?php echo base_url(); ?>/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -41,34 +41,34 @@
                                     </div>                               
                                     <?php if(session()->getFlashData('resetSuccess')) : ?>
                                         <div class="alert alert-danger" role="alert">
-                                            <?= session()->getFlashdata('resetSuccess'); ?>
+                                            <?php echo session()->getFlashdata('resetSuccess'); ?>
                                         </div>
                                     <?php endif; ?>
-                                    <form class="user" action="<?= base_url(); ?>/Admin/resetCheck" method="POST">
-                                        <?= csrf_field(); ?>
+                                    <form class="user" action="<?php echo base_url(); ?>/Admin/resetCheck" method="POST">
+                                        <?php echo csrf_field(); ?>
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user <?= ($validation->hasError('nik') ? 'is-invalid' : ''); ?>" placeholder="Enter Your NIK..." id="nik" name="nik" value="<?= old('nik'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('nik'); ?></div>
+                                            <input type="text" class="form-control form-control-user <?php echo ($validation->hasError('nik') ? 'is-invalid' : ''); ?>" placeholder="Enter Your NIK..." id="nik" name="nik" value="<?php echo old('nik'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('nik'); ?></div>
                                         </div>
 
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user <?= ($validation->hasError('username') ? 'is-invalid' : ''); ?>" placeholder="Enter Your Username..." id="username" name="username" value="<?= old('username'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('username'); ?></div>
+                                            <input type="text" class="form-control form-control-user <?php echo ($validation->hasError('username') ? 'is-invalid' : ''); ?>" placeholder="Enter Your Username..." id="username" name="username" value="<?php echo old('username'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('username'); ?></div>
                                         </div>
                                     
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user <?= ($validation->hasError('email') ? 'is-invalid' : ''); ?>" placeholder="Enter Your Email Account..." id="email" name="email" value="<?= old('email'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('email'); ?></div>
+                                            <input type="email" class="form-control form-control-user <?php echo ($validation->hasError('email') ? 'is-invalid' : ''); ?>" placeholder="Enter Your Email Account..." id="email" name="email" value="<?php echo old('email'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('email'); ?></div>
                                         </div>
 
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user <?= ($validation->hasError('password') ? 'is-invalid' : ''); ?>" placeholder="Enter Your new password..." id="password" name="password" value="<?= old('password'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('password'); ?></div>
+                                            <input type="password" class="form-control form-control-user <?php echo ($validation->hasError('password') ? 'is-invalid' : ''); ?>" placeholder="Enter Your new password..." id="password" name="password" value="<?php echo old('password'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('password'); ?></div>
                                         </div>
 
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user <?= ($validation->hasError('confirmPwd') ? 'is-invalid' : ''); ?>" placeholder="Confirm Your Password..." id="confirmPwd" name="confirmPwd" value="<?= old('confirmPwd'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('confirmPwd'); ?></div>
+                                            <input type="password" class="form-control form-control-user <?php echo ($validation->hasError('confirmPwd') ? 'is-invalid' : ''); ?>" placeholder="Confirm Your Password..." id="confirmPwd" name="confirmPwd" value="<?php echo old('confirmPwd'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('confirmPwd'); ?></div>
                                         </div>
 
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Reset Password</button> 
@@ -76,7 +76,7 @@
                                     <hr>
                                      
                                     <div class="text-center">
-                                        <a class="small" href="<?= base_url(); ?>/Admin/Login">Already have an Account? Click here to Login</a>
+                                        <a class="small" href="<?php echo base_url(); ?>/Admin/Login">Already have an Account? Click here to Login</a>
                                     </div>
                                 </div>
                             </div>

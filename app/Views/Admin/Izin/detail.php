@@ -1,6 +1,6 @@
-<?= $this->extend('Admin/layout/template'); ?>
+<?php echo $this->extend('Admin/layout/template'); ?>
 
-<?= $this->section('content'); ?>
+<?php echo $this->section('content'); ?>
 <?php $session = session()->get(); ?>
 <div class="p-5">
     <div class="text-center mb-2">
@@ -29,7 +29,7 @@
                 <select class="form-select" id="status" name="status" value=" " disabled="disabled">
                     <option selected disabled>Pilih Keterangan Izin</option>    
                     <?php foreach($statusIzin as $statusIzin) : ?>
-                    <option value="<?= $statusIzin['status_izin_id']; ?>" <?= ($izin[0]['izin_status_id'] === $statusIzin['status_izin_id'] ? 'selected' : ''); ?>><?= $statusIzin['status_izin_keterangan']; ?></option>
+                    <option value="<?php echo $statusIzin['status_izin_id']; ?>" <?php echo ($izin[0]['izin_status_id'] === $statusIzin['status_izin_id'] ? 'selected' : ''); ?>><?php echo $statusIzin['status_izin_keterangan']; ?></option>
                     <?php endforeach ?>
                 </select>
             </div>
@@ -42,7 +42,6 @@
                 </select>
             </div>
             <div class="form-floating input-group mb-4">
-                <i class="bi bi-calendar-date input-group-text"></i>
                 <input type="text" id="datepicker" class="datepicker_input form-control" placeholder="DD/MM/YYYY" name="date" value="<?php echo $izin[0]['izin_date']; ?>" readonly>
                 <label for="datepicker">Tanggal Izin</label>
             </div>
@@ -67,7 +66,7 @@
 /* Bootstrap 5 JS included */
 /* vanillajs-datepicker 1.1.4 JS included */
 
-$('#syarat').val('<?= (old('syarat') ? old('syarat') : $izin[0]['izin_syarat']); ?>').trigger('change');
-    $('#status').val('<?= (old('status') ? old('status') : $izin[0]['izin_status_id']); ?>').trigger('change');
+$('#syarat').val('<?php echo (old('syarat') ? old('syarat') : $izin[0]['izin_syarat']); ?>').trigger('change');
+    $('#status').val('<?php echo (old('status') ? old('status') : $izin[0]['izin_status_id']); ?>').trigger('change');
 </script>
-<?= $this->endSection(); ?>
+<?php echo $this->endSection(); ?>

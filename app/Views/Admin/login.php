@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Absensi - <?= $title; ?></title>
+    <title>Absensi - <?php echo $title; ?></title>
 
     <!-- Custom fonts for this template-->
     <link href="<?php echo base_url(); ?>/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -44,14 +44,14 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user" action="<?= base_url(); ?>/Admin/Check" method="POST">
+                                    <form class="user" action="<?php echo base_url(); ?>/Admin/Check" method="POST">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user <?php echo ($validation->hasError('username') ? 'is-invalid' : ''); ?>" placeholder="Enter Username..." id="username" name="username" value="<?= old('username'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('username'); ?></div>
+                                            <input type="text" class="form-control form-control-user <?php echo ($validation->hasError('username') ? 'is-invalid' : ''); ?>" placeholder="Enter Username..." id="username" name="username" value="<?php echo old('username'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('username'); ?></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user <?= ($validation->hasError('password') ? 'is-invalid' : ''); ?>" placeholder="Enter Password..." id="password" name="password" value="<?= old('password'); ?>">
-                                            <div class="invalid-feedback"><?= $validation->getError('password'); ?></div>
+                                            <input type="password" class="form-control form-control-user <?php echo ($validation->hasError('password') ? 'is-invalid' : ''); ?>" placeholder="Enter Password..." id="password" name="password" value="<?php echo old('password'); ?>">
+                                            <div class="invalid-feedback"><?php echo $validation->getError('password'); ?></div>
                                         </div>
                                         
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Login</button> 
@@ -59,7 +59,7 @@
                                     <hr>
                                      
                                     <div class="text-center">
-                                        <a class="small" href="<?= base_url(); ?>/Admin/forgotPassword">Forgot Password?</a>
+                                        <a class="small" href="<?php echo base_url(); ?>/Admin/forgotPassword">Forgot Password?</a>
                                     </div>
                                 </div>
                             </div>
